@@ -81,8 +81,8 @@ for m = 1:length(Ms)
     fitmeasures = cell(length(subjects), 1);
     fitparams = cell(length(subjects), 1);
 
-    for k = 1:length(subjects) % no parallel processing
-%     parfor k = 1:length(subjects) % parallel processing
+%     for k = 1:length(subjects) % no parallel processing
+    parfor k = 1:length(subjects) % parallel processing
         s = subjects{k};
         this_data = data.(s);
 
