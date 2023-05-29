@@ -6,6 +6,7 @@
 
 clear all
 load('ModelFit.mat')
+ntrials = 100;
 indices = readtable(strjoin({'../data/index_', num2str(ntrials)}, ""));
 payoff_lookup = readtable("../data/payoff_lookup.csv");
 

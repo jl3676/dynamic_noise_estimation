@@ -1,0 +1,86 @@
+function nllh = dynamic_model_llh(theta,K,data)
+
+alpha = theta(1);
+beta = 20;
+bias = theta(2);
+stick = theta(3);
+rho = theta(4);
+forget = theta(5);
+epsilon = 0;
+lapse = theta(6);
+recover = theta(7);
+
+T = [1-recover lapse;recover 1-lapse];
+
+Allstimuli = data(:,1);
+Allchoices = data(:,2);
+Allrewards = data(:,3);
+Allsetsize = data(:,4);
+Allblocks = data(:,5);
+
+blocks = unique(Allblocks)';
+
+nA = 3;
+llh = 0;
+tt = 0;
+for b = blocks
+    Tb = find(Allblocks == b);
+    stimuli = Allstimuli(Tb);
+    choices = Allchoices(Tb);
+    rewards = Allrewards(Tb);
+    ns = Allsetsize(Tb(1));
+
+    % WM weight
+    w = rho*min(1,K/ns);
+    
+    Q = (1/nA)*ones(ns,nA);
+    WM = (1/nA)*ones(ns,nA);
+    p = [lapse 1-lapse];%[.5 .5];%
+
+    b = epsilon/nA + (1-epsilon)*exp(beta*Q(s,:));
+    b = b/sum(b);
+    tt = tt+1;
+    latent(tt) = p(2);
+    for k = 1:length(choices)
+        s = stimuli(k);
+        choice = choices(k);
+        r = rewards(k);
+
+        W = Q(s,:)+stick*side;
+        bRL = exp(beta*W);
+        bRL = epsilon/nA + (1-epsilon)*bRL/sum(bRL);
+        W = WM(s,:)+stick*side;
+        bWM = exp(beta*W);
+        bWM = epsilon/nA + (1-epsilon)*bWM/sum(bWM);
+        
+        b = w*bWM + (1-w)*bRL;
+           
+        lt = log(p(1)/nA + b(choice)*p(2));
+        llh = llh + lt;
+        tt = tt+1;
+        latent(tt) = p(2);
+
+        p = (p(1) * T(:,1) / nA + b(choice) * p(2) * T(:,2)) / exp(lt);
+        
+        WM = WM + forget*(1/nA - WM);
+        if r==1
+            alphaRL = alpha;
+            alphaWM = 1;
+        else
+            alphaRL = bias*alpha;
+            alphaWM = bias;
+        end
+        Q(s,choice) = Q(s,choice) + alphaRL*(r-Q(s,choice));
+        Q(Q>30) = 30;
+        WM(s,choice) = WM(s,choice) + alphaWM*(r-WM(s,choice));
+        WM(WM>30) = 30;
+         
+        side=zeros(1,nA);
+        side(choice)=1;
+        
+    end
+end
+
+nllh = -llh;
+
+end
