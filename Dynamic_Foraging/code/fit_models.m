@@ -52,7 +52,7 @@ Ms = [];
 
 % RL meta model
 curr_model = [];
-curr_model.name = 'RL_meta_static'; % Name of the model
+curr_model.name = 'static_model'; % Name of the model
 curr_model.pMin = [1e-6 1e-6 1e-6 1e-6 -1 1e-6 1e-6 1e-6]; % Minimum values for model parameters
 curr_model.pMax = [1 1 20 1 1 1 1 1]; % Maximum values for model parameters
 curr_model.pdfs = {alpha_sample, alpha_sample, beta_sample, forget_sample, bias_sample, alpha_sample, phi_sample, eps_sample}; % Sampling functions for model parameters
@@ -61,7 +61,7 @@ Ms{1} = curr_model; % Add the model to the model list
 
 % RL meta lapse model
 curr_model = [];
-curr_model.name = 'RL_meta_dynamic'; % Name of the model
+curr_model.name = 'dynamic_model'; % Name of the model
 curr_model.pMin = [1e-6 1e-6 1e-6 1e-6 -1 1e-6 1e-6 1e-6 1e-6]; % Minimum values for model parameters
 curr_model.pMax = [1 1 20 1 1 1 1 1 1]; % Maximum values for model parameters
 curr_model.pdfs = {alpha_sample, alpha_sample, beta_sample, forget_sample, bias_sample, alpha_sample, phi_sample, lapse_sample, rec_sample}; % Sampling functions for model parameters
@@ -153,7 +153,7 @@ xticks(1:length(Ms));
 xticklabels(cellfun(@(x) x.name, Ms, 'UniformOutput', false));
 set(gca, 'TickLabelInterpreter', 'none')
 ylabel('\Delta AIC')
-title('RL models')
+title('Models')
 
 static_model_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', false), 'static'));
 dynamic_model_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', false), 'dynamic'));
