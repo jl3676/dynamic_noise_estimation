@@ -32,6 +32,8 @@ payoff_schedule = readtable(['../data/payoff_schedule_' num2str(payoff) '.csv'])
 
 for k = 1:num_trials
 
+    data(k, 4) = engaged;
+
     if nargin < 4
         if engaged
             b = epsilon / nA + (1 - epsilon) * exp(beta * Q - logsumexp(beta * Q));
@@ -64,7 +66,8 @@ for k = 1:num_trials
     
     Q = explore + exploit;
     
-    data(k, :) = [choice, gain, loss];
+    data(k, 1:3) = [choice, gain, loss];
+    data(k, 5) = b(choice);
 end
 
 end

@@ -1,4 +1,4 @@
-function nllh = dynamic_model_llh(theta, data)
+function latent = dynamic_model_latent(theta, data)
 % Computes the full negative log likelihood of data given parameters (theta).
 %
 % Inputs:
@@ -16,7 +16,7 @@ function nllh = dynamic_model_llh(theta, data)
 %     - data(:, 3): Losses received by the subject
 %
 % Output:
-%   - nllh: Negative log likelihood of the data given the model parameters (theta)
+%   - latent: latent state and choice probability trajectories 
 
 % Extract parameter values
 alpha = theta(1);     % Learning rate
@@ -63,7 +63,8 @@ for k = 1:length(choices)
     exploit(choice) = exploit(choice) + (gain ^ sensitivity - abs(loss) ^ sensitivity);
     explore = explore + alpha * (phi - explore);
     explore(choice) = 0;
+
+    latent(k,:) = [p(2), b(choice)];
 end
 
-nllh = -llh;
 end

@@ -34,7 +34,7 @@ choices = data(:, 1);    % Choices from data
 gains = data(:, 2);      % Rewards from data
 losses = data(:, 3);     % Losses from data
 
-nA = numel(unique(choices));    % Number of available actions
+nA = 4;    % Number of available actions
 
 explore = ones(nA, 1) / nA;
 exploit = ones(nA, 1) / nA;
