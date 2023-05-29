@@ -1,4 +1,4 @@
-function data = RL_meta_dynamic(theta, rewardStruct)
+function data = dynamic_model(theta, rewardStruct)
 % Simulates data for the probabilistic reversal environment using a static RL model.
 %
 % Inputs:

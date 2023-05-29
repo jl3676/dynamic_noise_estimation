@@ -1,4 +1,4 @@
-function nllh = RL_meta_dynamic_llh(theta, data)
+function nllh = dynamic_model_llh(theta, data)
 % Computes the full negative log likelihood of data given parameters (theta).
 %
 % Input:

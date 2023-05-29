@@ -34,6 +34,7 @@ nA = 2; % Number of actions
 
 %% Simulate data for each session
 sessions = fieldnames(rewardStruct)';
+counter = 0; % Counter variable for trials over sessions
 
 for s = sessions
     Q = ones(1,nA) / nA; % randomly initialize Q-values for choices Left and Right
@@ -45,6 +46,9 @@ for s = sessions
     N = length(this_rewardProbR); % Number of trials in the session
     
     for t = 1:N
+        counter = counter + 1; % Increment counter
+        latent(counter, 1) = engaged;
+
         data.(s{1})(t).rewardProbL = this_rewardProbL(t); % Store the reward probability for Left choice in the data
         data.(s{1})(t).rewardProbR = this_rewardProbR(t); % Store the reward probability for Right choice in the data
         data.(s{1})(t).latent_att = engaged; % Store the current state of engagement (latent) in the data

@@ -1,0 +1,174 @@
+
+clear all
+load('ModelFit.mat')
+
+%%
+
+% manipulate lapse and recover params
+gen_lapse_rec = false;
+
+model_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', false), 'dynamic'));
+M = Ms{model_ind};
+
+fitted_params = All_Params{strcmp(cellfun(@(x) x.name, Ms(:), 'UniformOutput', false), M.name)};
+
+rewardStructs = cell(length(subjects),1);
+for i=1:length(subjects)
+    subject_data = data.(subjects{i});
+    sess = fieldnames(subject_data);
+    nsessions = length(sess);
+
+    rewardStruct = struct();
+    for s=1:nsessions
+        rewardProbL = [subject_data.(sess{s}).rewardProbL]';
+        rewardProbR = [subject_data.(sess{s}).rewardProbR]';
+        rewardStruct.(sess{s}) = struct('rewardProbL', rewardProbL, 'rewardProbR', rewardProbR);
+    end
+
+    rewardStructs{i} = rewardStruct;
+end
+
+%% iterate
+% for all models
+n_subj_its = 30;
+n_recs = 100;
+
+p_engaged_0 = [];
+p_engaged_1 = [];
+p_engaged = cell(length(subjects),1);
+engaged_st = cell(length(subjects),1);
+n_iters = size(subjects,1);
+
+f = waitbar(0, 'Starting'); % start progress bar for iterations
+total_iters = size(subjects,1);
+this_iter = 0;
+
+for it=1:n_iters
+    this_iter = this_iter + 1;
+    waitbar(this_iter/total_iters, f, sprintf('Progress: %d %%', floor(this_iter/total_iters*100))); % update progress bar
+    
+    theta = fitted_params(it,:);
+    this_data = feval(M.name, theta, rewardStructs{it});
+    % Extract the field names from the struct
+fields = fieldnames(this_data);
+
+% Concatenate the "latent_att" values from all fields into a cell array
+latent_att_cell = cellfun(@(field) [this_data.(field).latent_att], fields, 'UniformOutput', false);
+
+% Concatenate the cell array into a single vector
+latent_att_vector = cat(2, latent_att_cell{:});
+    latent_sim = [this_data.latent_att; this_data.latent_prob];
+    ntrials = size(latent_sim,1);
+
+    subj_p_engaged_0 = zeros(n_subj_its,ntrials);
+    subj_p_engaged_1 = zeros(n_subj_its,ntrials);
+    subj_p_engaged = [];
+    subj_engaged_st = [];
+
+    all_data = cell(n_subj_its,1);
+    all_latent_sim = cell(n_subj_its,1);
+    all_latent_rec = zeros(n_subj_its*n_recs,ntrials);
+
+    parfor subj_it=1:n_subj_its
+        [this_data, latent_sim] = feval([M.name '_sim_latent'], theta, rewardStructs{it});
+        all_data{subj_it} = this_data;
+        all_latent_sim{subj_it} = latent_sim(:,2);
+    end
+        
+    parfor this_it=1:n_subj_its*n_recs
+        n_recs = 100;
+        subj_it = ceil(this_it/n_recs);
+        rec = rem(this_it-1,n_recs)+1;
+
+        data = all_data{subj_it};
+        latent_sim = all_latent_sim{subj_it};
+
+        n_recs = 100;
+        
+        this_latent_rec = feval([M.name '_latent'], theta, data);
+        all_latent_rec(this_it,:) = this_latent_rec(:,1);
+    end
+
+    for subj_it=1:n_subj_its
+        latent_sim = all_latent_sim{subj_it};
+        latent_rec = nanmean(all_latent_rec((subj_it-1)*n_recs+1:subj_it*n_recs,:));
+
+        subj_engaged_st = [subj_engaged_st latent_sim'];
+        subj_p_engaged = [subj_p_engaged latent_rec];
+    end
+
+    engaged_st{it} = subj_engaged_st;
+    p_engaged{it} = subj_p_engaged;
+end
+close(f);
+
+%% plot true engagedention over recovered p(engaged)
+nbins = 10;
+bins_left = linspace(0,1-1/nbins,nbins);
+bins_right = bins_left + 1/nbins;
+
+engaged_st_data = [];
+p_engaged_count = [];
+
+for subj=1:size(engaged_st,1)
+    this_p_engaged = p_engaged{subj};
+    this_engaged_st = engaged_st{subj};
+
+    this_engaged_st_data = [];
+    this_p_engaged_count = [];
+    for bin=1:nbins
+        this_engaged_st_data(end+1) = nanmean(this_engaged_st(this_p_engaged>=bins_left(bin) & this_p_engaged<=bins_right(bin)));
+        this_p_engaged_count(end+1) = nansum(this_p_engaged>=bins_left(bin) & this_p_engaged<=bins_right(bin));
+    end
+
+    engaged_st_data = [engaged_st_data; this_engaged_st_data];
+    p_engaged_count = [p_engaged_count; this_p_engaged_count];
+end
+
+x = 1:nbins;
+data = nanmean(engaged_st_data,1);
+err = nanstd(engaged_st_data,1) / sqrt(size(engaged_st_data,1));
+figure('Position',[300 300 1000 400])
+subplot(1,2,1)
+
+plot([0.5 10.5], [0 1], 'k');
+hold on
+er = errorbar(x,data,err,'ro');    
+% er.Color = [0 0 0];                            
+% er.LineStyle = 'none';  
+
+ticks = 1:(nbins+1);
+ticks = ticks - 0.5;
+xticks(ticks);
+xticklabels(linspace(0,1,nbins+1))
+xlabel('Recovered p(engaged)')
+ylim([0,1])
+ylabel('True latent state')
+
+title(['Latent state by recovered p(engaged) (' M.name ')'],'Interpreter','none')
+
+% plot p(engaged) count
+data = nanmean(p_engaged_count,1);
+err = nanstd(p_engaged_count,1) / sqrt(size(p_engaged_count,1));
+subplot(1,2,2)
+bar(x,data,'FaceColor',[.5 .4 .8],'EdgeColor',[.8 .6 .9],'LineWidth',1.5)
+hold on
+
+er = errorbar(x,data,err,err);    
+er.Color = [0 0 0];                            
+er.LineStyle = 'none';  
+
+ticks = 1:(nbins+1);
+ticks = ticks - 0.5;
+xticks(ticks);
+xticklabels(linspace(0,1,nbins+1))
+ticks_y = round(yticks / sum(data) * 100);
+ticks_y = strcat(string(ticks_y),' %');
+yticklabels(ticks_y);
+xlabel('Recovered p(engaged)')
+ylabel('Frequency')
+
+title(['Count of recovered p(engaged) (' M.name ')'],'Interpreter','none')
+
+saveas(gcf,'../plots/latent_probs_rec.png')
+saveas(gcf,'../plots/latent_probs_rec.svg')
