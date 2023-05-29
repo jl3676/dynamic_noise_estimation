@@ -98,17 +98,17 @@ for M1=1:size(Ms,2) % Iterate over models
                 % Set starting values of dynamic model parameters to the best fit
                 % static model parameters
                 if contains(name, 'dynamic') % Check if the model is dynamic
-                    dynamic_model = Ms{M2}; % Dynamic model for comparison
-                    static_model_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', false), 'static')); % Index of corresponding static model
-                    static_model = Ms{static_model_ind}; 
-                    for z = 1:length(dynamic_model.pnames)
-                        this_p = dynamic_model.pnames{z}; % Current parameter name
-                        if sum(strcmp(this_p, static_model.pnames)) > 0 % Check if the parameter is present in the static model
-                            par(strcmp(this_p, dynamic_model.pnames)) = All_Params{static_model_ind}(subject_idx, strcmp(this_p, Ms{static_model_ind}.pnames)); % Set dynamic parameter to the value of the corresponding static parameter
+                    model_dynamic = Ms{M2}; % Dynamic model for comparison
+                    model_static_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', false), 'static')); % Index of corresponding static model
+                    model_static = Ms{model_static_ind}; 
+                    for z = 1:length(model_dynamic.pnames)
+                        this_p = model_dynamic.pnames{z}; % Current parameter name
+                        if sum(strcmp(this_p, model_static.pnames)) > 0 % Check if the parameter is present in the static model
+                            par(strcmp(this_p, model_dynamic.pnames)) = All_Params{model_static_ind}(subject_idx, strcmp(this_p, Ms{model_static_ind}.pnames)); % Set dynamic parameter to the value of the corresponding static parameter
                         end
                     end
-                    par(strcmp('lapse', dynamic_model.pnames)) = All_Params{static_model_ind}(subject_idx, strcmp('epsilon', static_model.pnames)); % Set dynamic lapse parameter to the value of the static epsilon parameter
-                    par(strcmp('recover', dynamic_model.pnames)) = 1 - All_Params{static_model_ind}(subject_idx, strcmp('epsilon', static_model.pnames)); % Set dynamic recover parameter to (1 - static epsilon)
+                    par(strcmp('lapse', model_dynamic.pnames)) = All_Params{model_static_ind}(subject_idx, strcmp('epsilon', model_static.pnames)); % Set dynamic lapse parameter to the value of the static epsilon parameter
+                    par(strcmp('recover', model_dynamic.pnames)) = 1 - All_Params{model_static_ind}(subject_idx, strcmp('epsilon', model_static.pnames)); % Set dynamic recover parameter to (1 - static epsilon)
                 end
     
                 rng default % For reproducibility
@@ -118,8 +118,6 @@ for M1=1:size(Ms,2) % Iterate over models
                 gs = GlobalSearch;
                 [param,this_llh] = run(gs,problem); % Find optimal parameters using global search
                 
-                ntrials = sum(cellfun(@(x) numel(x), struct2cell(this_data))); % Total number of trials
-            
                 llh_M2(M2) = this_llh; % Store log-likelihood for current model
                 AIC_M2(M2) = 2 * this_llh + 2 * length(pmin); % Calculate AIC for current model
                 BIC_M2(M2) = 2 * this_llh + log(ntrials) * length(pmin); % Calculate BIC for current model
