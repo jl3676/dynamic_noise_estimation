@@ -1,72 +1,62 @@
-% This script performs model fitting to the Dynamic Foraging (Grossman et al., 2022) behavioral data using maximum likelihood estimation. 
-% 
-% Description:
-% 1. Data Loading: The script loads the behavioral data from the 'data.mat' file.
-% 2. Model Definition: Two models, RL_meta_static and RL_meta_dynamic, are defined along with their parameter priors. These models capture different aspects of the behavioral data.
-% 3. Model Fitting: The script fits the defined models to each subject's data in parallel. It uses maximum likelihood estimation, employing the fmincon function and the GlobalSearch optimization algorithm.
-% 4. Fit Measures: Fit measures such as AIC and BIC are calculated to assess the quality of model fit.
-% 5. Model Comparison: The models are compared based on their AIC differences, providing insights into which model better explains the behavioral data.
-% 6. Plotting: The script generates plots of AIC differences, allowing visual comparison between the models.
-% 7. Results: The generated plots are saved as 'fit.png' and 'fit.svg' for further analysis and documentation.
-% 
-% Usage:
-% 1. Ensure that the 'data.mat' file is available in the appropriate directory.
-% 2. Run the script to perform model fitting and analysis.
-% 3. Review the generated plots to compare the models based on AIC differences.
-% 4. The script also saves the fit results for further analysis.
-% 
+% IGT Model Fitting Script
+%
+% This script performs model fitting for the Iowa Gambling Task (IGT) data using two models: static_model and dynamic_model.
+% The script loads the IGT data for a specified number of trials, defines the priors for the model parameters,
+% and fits the models to the data using global optimization (GlobalSearch) and maximum likelihood estimation.
+% The script then calculates fit measures (AIC, BIC, etc.) for each model and plots the model comparison results.
+%
 % Dependencies:
 % - Optimization Toolbox (fmincon)
 % - Global Optimization Toolbox
 % - Parallel Computing Toolbox (for parallel execution)
 %
 % Author: Jing-Jing Li (jl3676@berkeley.edu)
-% Last Modified: 5/28/2023
+% Last Modified: 5/29/2023
 
 %% Set up
 % Clear workspace variables
 clear all
 
 % Load data
-load("../data/data.mat")
-
-% Only keep the behavioral data
-data = data.dynamicForaging.behavior;
+ntrials = 100;
+data_choice = readtable(strjoin(["../data/choice_" num2str(ntrials) ".txt"],""));
+data_gain = readtable(strjoin(["../data/wi_" num2str(ntrials) ".txt"],""));
+data_loss = readtable(strjoin(["../data/lo_" num2str(ntrials) ".txt"],""));
 
 % Get list of subjects
-subjects = fieldnames(data);
+subjects = unique(data_choice.Var1);
 
 %% Define priors of model parameters
 % Define functions to sample model parameters from uniform distributions
 beta_sample = @(x) unifrnd(0, 20); % Sampling function for beta parameter
 alpha_sample = @(x) unifrnd(0, 1); % Sampling function for alpha parameter
-forget_sample = @(x) unifrnd(0, 1); % Sampling function for forget parameter
-bias_sample = @(x) unifrnd(-1, 1); % Sampling function for bias parameter
+sensitivity_sample = @(x) unifrnd(0, 1); 
+decay_sample = @(x) unifrnd(0, 1); % Sampling function for decay parameter
+phi_sample = @(x) unifrnd(0, 200); % Sampling function for phi parameter
 eps_sample = @(x) unifrnd(0, 1); % Sampling function for epsilon parameter
-phi_sample = @(x) unifrnd(0, 1); % Sampling function for phi parameter
 lapse_sample = @(x) unifrnd(0, 1); % Sampling function for lapse parameter (T_1^0)
 rec_sample = @(x) unifrnd(0, 1); % Sampling function for recover parameter (T_0^1)
 
 %% Define models
 Ms = [];
 
-% RL meta model
 curr_model = [];
-curr_model.name = 'static_model'; % Name of the model
-curr_model.pMin = [1e-6 1e-6 1e-6 1e-6 -1 1e-6 1e-6 1e-6]; % Minimum values for model parameters
-curr_model.pMax = [1 1 20 1 1 1 1 1]; % Maximum values for model parameters
-curr_model.pdfs = {alpha_sample, alpha_sample, beta_sample, forget_sample, bias_sample, alpha_sample, phi_sample, eps_sample}; % Sampling functions for model parameters
-curr_model.pnames = {'alpha-', 'alpha+', 'beta', 'forget', 'bias', 'alpha_v', 'phi', 'epsilon'}; % Names of model parameters
-Ms{1} = curr_model; % Add the model to the model list
+curr_model.name = 'static_model';
+curr_model.pMin = [1e-6 1e-6 1e-6 1e-6 1e-6 1e-6];
+curr_model.pMax = [1 20 1 1 200 1];
+curr_model.pdfs = {alpha_sample, beta_sample, sensitivity_sample, decay_sample, phi_sample, eps_sample};
+curr_model.pnames = {'alpha','beta','sensitivity','decay','phi','epsilon'};
 
-% RL meta lapse model
+Ms{1} = curr_model;
+
 curr_model = [];
-curr_model.name = 'dynamic_model'; % Name of the model
-curr_model.pMin = [1e-6 1e-6 1e-6 1e-6 -1 1e-6 1e-6 1e-6 1e-6]; % Minimum values for model parameters
-curr_model.pMax = [1 1 20 1 1 1 1 1 1]; % Maximum values for model parameters
-curr_model.pdfs = {alpha_sample, alpha_sample, beta_sample, forget_sample, bias_sample, alpha_sample, phi_sample, lapse_sample, rec_sample}; % Sampling functions for model parameters
-curr_model.pnames = {'alpha-', 'alpha+', 'beta', 'forget', 'bias', 'alpha_v', 'phi', 'lapse', 'recover'}; % Names of model parameters
-Ms{2} = curr_model; % Add the model to the model list
+curr_model.name = 'dynamic_model';
+curr_model.pMin = [1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6];
+curr_model.pMax = [1 20 1 1 200 1 1];
+curr_model.pdfs = {alpha_sample, beta_sample, sensitivity_sample, decay_sample, phi_sample, lapse_sample, rec_sample};
+curr_model.pnames = {'alpha','beta','sensitivity','decay','phi','lapse','recover'};
+
+Ms{2} = curr_model;
 
 %% Fit models
 All_Params = cell(length(Ms), 1);
@@ -83,8 +73,7 @@ for m = 1:length(Ms)
 
 %     for k = 1:length(subjects) % no parallel processing
     parfor k = 1:length(subjects) % parallel processing
-        s = subjects{k};
-        this_data = data.(s);
+        this_data = [table2array(data_choice(k,2:end))' table2array(data_gain(k,2:end))' table2array(data_loss(k,2:end))'];
 
         % Sample parameter starting values
         par = zeros(length(pmin), 1);
@@ -117,7 +106,6 @@ for m = 1:length(Ms)
         [param, llh] = run(gs, problem);
     
         % Calculate fit measures (AIC, BIC, etc.)
-        ntrials = sum(cellfun(@(x) numel(x), struct2cell(this_data)));
         AIC = 2 * llh + 2 * length(param);
         BIC = 2 * llh + log(ntrials) * length(param);
         AIC0 = -2 * log(1/3) * ntrials;
@@ -167,7 +155,7 @@ title('attention vs. not')
 ylabel('\Delta AIC')
 xlabel('sorted participant')
 set(gca, 'fontsize', 14)
-sgtitle(['Dynamic Foraging (p=' num2str(p) ')'])
+sgtitle(['IGT (p=' num2str(p) ')'])
 
 % Save figures (Fig 4)
 saveas(gcf, '../plots/fit.png')
