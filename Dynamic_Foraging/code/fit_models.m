@@ -81,8 +81,8 @@ for m = 1:length(Ms)
     fitmeasures = cell(length(subjects), 1);
     fitparams = cell(length(subjects), 1);
 
-    % for k = 1:length(subjects) % no parallel processing
-    parfor k = 1:length(subjects) % parallel processing
+    for k = 1:length(subjects) % no parallel processing
+%     parfor k = 1:length(subjects) % parallel processing
         s = subjects{k};
         this_data = data.(s);
 
@@ -95,17 +95,17 @@ for m = 1:length(Ms)
         % Set starting values of dynamic model parameters to the best fit
         % static model parameters
         if contains(fit_model.name, 'dynamic')
-            dynamic_model = fit_model;
-            static_model_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', false), 'static'));
-            static_model = Ms{static_model_ind};
-            for z = 1:length(dynamic_model.pnames)
-                this_p = dynamic_model.pnames{z};
-                if sum(strcmp(this_p, static_model.pnames)) > 0
-                    par(strcmp(this_p, dynamic_model.pnames)) = All_Params{static_model_ind}(k, strcmp(this_p, Ms{static_model_ind}.pnames));
+            model_dynamic = fit_model;
+            model_static_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', false), 'static'));
+            model_static = Ms{model_static_ind};
+            for z = 1:length(model_dynamic.pnames)
+                this_p = model_dynamic.pnames{z};
+                if sum(strcmp(this_p, model_static.pnames)) > 0
+                    par(strcmp(this_p, model_dynamic.pnames)) = All_Params{model_static_ind}(k, strcmp(this_p, Ms{model_static_ind}.pnames));
                 end
             end
-            par(strcmp('lapse', dynamic_model.pnames)) = All_Params{static_model_ind}(k, strcmp('epsilon', static_model.pnames));
-            par(strcmp('recover', dynamic_model.pnames)) = 1 - All_Params{static_model_ind}(k, strcmp('epsilon', static_model.pnames));
+            par(strcmp('lapse', model_dynamic.pnames)) = All_Params{model_static_ind}(k, strcmp('epsilon', model_static.pnames));
+            par(strcmp('recover', model_dynamic.pnames)) = 1 - All_Params{model_static_ind}(k, strcmp('epsilon', model_static.pnames));
         end
 
         % Define the objective function for optimization
