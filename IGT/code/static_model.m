@@ -1,8 +1,8 @@
-function data = dynamic_model(theta, payoff, num_trials, p_latent)
-% Generates data for the Iowa Gambling Task (IGT) using the dynamic model.
+function data = static_model(theta, payoff, num_trials, p_latent)
+% Generates data for the Iowa Gambling Task (IGT) using the static model.
 %
 % Inputs:
-%   - theta: Model parameters [alpha, beta, sensitivity, decay, phi, lapse, recover].
+%   - theta: Model parameters [alpha, beta, sensitivity, decay, phi, epsilon].
 %   - payoff: Payoff schedule identifier.
 %   - num_trials: Number of trials to generate.
 %   - p_latent (optional): Probability of latent attentional state (0 or 1) for each trial.
@@ -15,9 +15,9 @@ beta = theta(2);
 sensitivity = theta(3);
 decay = theta(4);
 phi = theta(5);
-epsilon = 0;
-lapse = theta(6);
-recover = theta(7);
+epsilon = theta(6);
+lapse = 0;
+recover = 1;
 
 engaged = 1;
 nA = 4;
