@@ -45,7 +45,6 @@
 %% Set up
 clear all
 
-ntrials = 100;
 load('ModelFit.mat') % Load precomputed model fits
 indices = readtable(strjoin({'../data/index_', num2str(ntrials)}, ""));
 payoff_lookup = readtable("../data/payoff_lookup.csv");
@@ -74,6 +73,7 @@ for M1=1:size(Ms,2) % Iterate over models
         % Repeat for 10 times per subject
         for rep=1:10
             % Generate data
+            ntrials = 100;
             this_data = feval(model1, theta, payoff, ntrials); % Simulated data based on the current model and parameters
     
             llh_M2 = zeros(size(Ms,2),1); % Log-likelihood vector for each model
