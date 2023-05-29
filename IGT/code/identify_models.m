@@ -68,7 +68,7 @@ for M1=1:size(Ms,2) % Iterate over models
 
     parfor subject_idx=1:num_subjects % Iterate over subjects in parallel
         theta = fitted_params(subject_idx,:); % Fitted parameters for current subject
-        study = indices.Study(indices.Subj == sscanf(subjects{it},'Subj_%d'));
+        study = indices.Study(indices.Subj == sscanf(subjects{subject_idx},'Subj_%d'));
         payoff = payoff_lookup.Payoff(strcmp(payoff_lookup.Dataset,study{1}));
 
         % Repeat for 10 times per subject
