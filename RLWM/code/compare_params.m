@@ -26,14 +26,19 @@ model_dynamic_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', fals
 figure('Position', [300, 300, 1500, 600])
 
 % Plot the parameter shift for each model parameter
-for param = Ms{model_static_ind}.pnames(1:end-1)
+pidx = 0;
+for param = Ms{model_static_ind}.pnames(1:end)
     param_ind_1 = strcmp(Ms{model_static_ind}.pnames, param);
     param_ind_2 = strcmp(Ms{model_dynamic_ind}.pnames, param);
-    subplot(3, 2, find(strcmp(param, Ms{model_static_ind}.pnames(1:end-1))))
-    hold on
     [B1, I] = sort(All_Params{model_static_ind}(idx, param_ind_1));
     B2 = All_Params{model_dynamic_ind}(idx, param_ind_2);
+    if isempty(B2)
+        continue
+    end
     B2 = B2(I);
+    pidx = pidx + 1;
+    subplot(3, 2, pidx)
+    hold on
     for k = 1:length(B1)
         plot([k k], [B1(k) B2(k)], 'Color', 'k')
         hold on
@@ -49,7 +54,6 @@ for param = Ms{model_static_ind}.pnames(1:end-1)
         hold on
     end
     xlabel("Sorted participant")
-    ylim([Ms{model_static_ind}.pMin(param_ind_1) Ms{model_static_ind}.pMax(param_ind_1)])
     set(gca, 'TickLabelInterpreter', 'none')
     p = signrank(B1, B2);
     title(strjoin([param ' (p=' num2str(p, 3) ')']), 'Interpreter', 'none')

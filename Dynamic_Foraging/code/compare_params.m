@@ -75,7 +75,7 @@ hold on
 plot(log(All_Params{model_static_ind}(:, eps_ind) + .001), log(All_Params{model_dynamic_ind}(:, lapse_ind) + .001), '.', 'MarkerSize', 20, 'MarkerEdgeColor', "#EDB120")
 hold on
 inds = AICs(:, model_dynamic_ind) - AICs(:, model_static_ind) > 0;
-[r, p] = corr(All_Params{model_static_ind}(inds, end), All_Params{model_dynamic_ind}(inds, lapse_ind), 'type', 'Kendall');
+[r, p] = corr(All_Params{model_static_ind}(inds, eps_ind), All_Params{model_dynamic_ind}(inds, lapse_ind), 'type', 'Kendall');
 inds = AICs(:, model_dynamic_ind) - AICs(:, model_static_ind) < 0;
 plot(log(All_Params{model_static_ind}(inds, eps_ind) + .001), log(All_Params{model_dynamic_ind}(inds, lapse_ind) + .001), '.', 'MarkerSize', 20, 'MarkerEdgeColor', "#77AC30")
 xlabel('log(epsilon)')
