@@ -124,7 +124,7 @@ for M1=1:size(Ms,2) % Iterate over models
                 end
         
                 [this_llh, i] = min(sofar(:, end));
-                ntrials = size(data, 1);
+                ntrials = size(this_data, 1);
                 
                 llh_M2(M2) = this_llh; % Store log-likelihood for current model
                 AIC_M2(M2) = 2 * this_llh + 2 * length(pmin); % Calculate AIC for current model
