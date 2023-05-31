@@ -2,7 +2,7 @@
 % 
 % Description:
 % 1. Data Loading: The script loads the behavioral data from the 'data.mat' file.
-% 2. Model Definition: Two models, RL_meta_static and RL_meta_dynamic, are defined along with their parameter priors. These models capture different aspects of the behavioral data.
+% 2. Model Definition: Two models, static_model and dynamic_model, are defined along with their parameter priors. These models capture different aspects of the behavioral data.
 % 3. Model Fitting: The script fits the defined models to each subject's data in parallel. It uses maximum likelihood estimation, employing the fmincon function and the GlobalSearch optimization algorithm.
 % 4. Fit Measures: Fit measures such as AIC and BIC are calculated to assess the quality of model fit.
 % 5. Model Comparison: The models are compared based on their AIC differences, providing insights into which model better explains the behavioral data.

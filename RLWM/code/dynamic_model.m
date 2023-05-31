@@ -16,7 +16,7 @@ rho = theta(4);
 forget = theta(5);
 epsilon = 0;
 lapse = theta(6);
-ret = theta(7);
+recover = theta(7);
 
 nA = 3;
 engaged = 1; 
@@ -55,7 +55,7 @@ for block = all_blocks
             if rand < lapse, engaged = 0; end % lapse with a probability
         else
             pr = ones(1,nA) / nA;
-            if rand < ret, engaged = 1; end % return to attentive state with a probability
+            if rand < recover, engaged = 1; end % recoverurn to attentive state with a probability
         end
 
         % sample choice
@@ -87,7 +87,7 @@ for block = all_blocks
     
     for trials=num_trials:13*ns
         k = k + 1;
-        data(k,1:5) = [nan nan nan ns block];
+        data(k,:) = [nan nan nan ns block nan nan];
     end
 end
 end
