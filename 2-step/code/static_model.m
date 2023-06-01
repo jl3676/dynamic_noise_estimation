@@ -28,7 +28,6 @@ Tm = [.7, .3; .3, .7];      % transition matrix for first-stage states
 priorchoice = [0, 0];
 
 engaged = 1;
-latent = zeros(N, 2);
 
 for i = 1:N
     MaxQ = max(Qd, [], 2);
@@ -46,8 +45,6 @@ for i = 1:N
     
     numerator1 = exp(beta_mf * Qmf(1, 1) + beta_mb * Qmb(1, 1) + stickiness * priorchoice(1));
     denominator1 = sum(exp(beta_mf * Qmf(1, :) + beta_mb * Qmb(1, :)) + (stickiness * priorchoice));
-
-    latent(i, 2) = engaged;
 
     if engaged == 1 && rand > epsilon
         % Choose first stage action
@@ -86,11 +83,6 @@ for i = 1:N
         end
     end
 
-    numerator1 = exp(beta_mf * Qmf(1, a1) + beta_mb * Qmb(1, a1) + stickiness * priorchoice(1));
-    numerator2 = exp(beta * (Qd(s, a2)));
-
-    latent(i, 1) = (numerator1 / denominator1) * (numerator2 / denominator2);
-
     alien = rem(s, 2);
 
     if s <= 2
@@ -123,5 +115,4 @@ data.choice2 = choice2;
 data.money = money;
 data.state = state;
 data.transition = transition;
-data.latent = latent;
 end
