@@ -47,7 +47,7 @@ for i = 1:N
     end
     
     numerator1 = exp(beta_mf * Qmf(1, 1) + beta_mb * Qmb(1, 1) + stickiness * priorchoice(1));
-    denominator1 = sum(exp(beta_mf * Qmf(1, :) + beta_mb * Qmb(1, :)) + (stickiness * priorchoice));
+    denominator1 = sum(exp(beta_mf * Qmf(1, :) + beta_mb * Qmb(1, :) + stickiness * priorchoice));
 
     latent(i, 2) = engaged ;
 

@@ -44,7 +44,7 @@ for i = 1:N
     end
     
     numerator1 = exp(beta_mf * Qmf(1, 1) + beta_mb * Qmb(1, 1) + stickiness * priorchoice(1));
-    denominator1 = sum(exp(beta_mf * Qmf(1, :) + beta_mb * Qmb(1, :)) + (stickiness * priorchoice));
+    denominator1 = sum(exp(beta_mf * Qmf(1, :) + beta_mb * Qmb(1, :) + stickiness * priorchoice));
 
     if engaged == 1 && rand > epsilon
         % Choose first stage action
@@ -82,6 +82,9 @@ for i = 1:N
             engaged = 1;
         end
     end
+
+    numerator1 = exp(beta_mf*(Qmf(1,a1)) + beta_mb*(Qmb(1,a1)) + stickiness*priorchoice(1));
+    numerator2 = exp(beta*(Qd(s,a2)));
 
     alien = rem(s, 2);
 

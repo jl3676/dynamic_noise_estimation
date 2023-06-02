@@ -1,5 +1,5 @@
 function latent = dynamic_model_latent(theta, data)
-% dynamic_model_llh computes the negative log likelihood (nllh) of the dynamic model given the parameters (theta) and data.
+% dynamic_model_latent computes the latent state probability trajectories of the dynamic model given the parameters (theta) and data.
 
 % Parameters:
 alpha = theta(1);           % softmax inverse temperature
@@ -74,14 +74,14 @@ for i = 1:N
     lik_choice2 = numerator / denominator;
     
     lt = lt + log(lik_choice2);
-    latent(i, :) = [p(2), exp(lt)];
     lt = log((1/nA) * (1/nA) * p(1) + exp(lt) * p(2));
     
     llh = llh + lt;
     
     % Update p(att)
     p = ((1/nA) * (1/nA) * p(1) * T(:, 1) + lik_choice1 * lik_choice2 * p(2) * T(:, 2)) / exp(lt);
-    
+    latent(i, :) = [p(2), exp(lt)];
+
     % Compute Reward Prediction Error (RPE)
     tdQ = [0, 0];
     tdQ(1) = Qd(stateshort(i), choice2short(i)) - Qd(1, choice1short(i));
