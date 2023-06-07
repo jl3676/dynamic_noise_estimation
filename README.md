@@ -11,12 +11,12 @@
 - Dynamic_Foraging (Grossman et al., 2022)
     - Public data repository: https://datadryad.org/stash/dataset/doi:10.5061/dryad.cz8w9gj4s
 - IGT (Steingroever et al., 2015)
-    - Public data repository: 
+    - Public data repository: https://osf.io/8t7rm/
     - payoff_lookup.csv, payoff_schedule_1.csv, payoff_schedule_2.csv, payoff_schedule_3.csv were created by Jing-Jing Li according to the payoff schedules described in the paper
 - RLWM (Collins 2018)
-    - Public data repository: 
+    - Public data repository: https://osf.io/5gbr3/ 
 - 2-step (Nussenbaum et al., 2020)
-    - Public data repository:
+    - Public data repository: https://osf.io/we89v/
     - data_processing_scripts/concatenate_mats.m was created by Jing-Jing Li to reorganize the data structure
 
 ### Modeling scripts for empirical datasets (task/code/)

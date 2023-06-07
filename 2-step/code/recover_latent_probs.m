@@ -20,9 +20,9 @@ total_iters = length(subjects);
 this_iter = 0;
 
 % Initialize variables
-p_att_0 = [];
-p_att_1 = [];
-p_att = cell(length(subjects),1);
+p_engaged_0 = [];
+p_engaged_1 = [];
+p_engaged = cell(length(subjects),1);
 latent_st = cell(length(subjects),1);
 n_iters = length(subjects);
 
@@ -42,9 +42,9 @@ for it = 1:n_iters
     n_subj_its = 100;
     n_recs = 100;
 
-    subj_p_att_0 = zeros(n_subj_its,ntrials);
-    subj_p_att_1 = zeros(n_subj_its,ntrials);
-    subj_p_att = [];
+    subj_p_engaged_0 = zeros(n_subj_its,ntrials);
+    subj_p_engaged_1 = zeros(n_subj_its,ntrials);
+    subj_p_engaged = [];
     subj_latent_st = [];
 
     all_data = cell(n_subj_its,1);
@@ -77,11 +77,11 @@ for it = 1:n_iters
         latent_rec = nanmean(all_latent_rec((subj_it-1)*n_recs+1:subj_it*n_recs,:));
 
         subj_latent_st = [subj_latent_st latent_sim'];
-        subj_p_att = [subj_p_att latent_rec];
+        subj_p_engaged = [subj_p_engaged latent_rec];
     end
 
     latent_st{it} = subj_latent_st;
-    p_att{it} = subj_p_att;
+    p_engaged{it} = subj_p_engaged;
 end
 
 % Close progress bar
@@ -96,24 +96,24 @@ bins_right = bins_left + 1/nbins;
 
 % Initialize variables for plotting
 latent_st_data = [];
-p_att_count = [];
+p_engaged_count = [];
 
 % Iterate over subjects
 for subj = 1:size(latent_st,1)
-    this_p_att = p_att{subj};
+    this_p_engaged = p_engaged{subj};
     this_latent_st = latent_st{subj};
 
     this_latent_st_data = [];
-    this_p_att_count = [];
+    this_p_engaged_count = [];
     
     % Calculate mean latent state and frequency of recovered attention for each bin
     for bin = 1:nbins
-        this_latent_st_data(end+1) = nanmean(this_latent_st(this_p_att>=bins_left(bin) & this_p_att<=bins_right(bin)));
-        this_p_att_count(end+1) = nansum(this_p_att>=bins_left(bin) & this_p_att<=bins_right(bin));
+        this_latent_st_data(end+1) = nanmean(this_latent_st(this_p_engaged>=bins_left(bin) & this_p_engaged<=bins_right(bin)));
+        this_p_engaged_count(end+1) = nansum(this_p_engaged>=bins_left(bin) & this_p_engaged<=bins_right(bin));
     end
 
     latent_st_data = [latent_st_data; this_latent_st_data];
-    p_att_count = [p_att_count; this_p_att_count];
+    p_engaged_count = [p_engaged_count; this_p_engaged_count];
 end
 
 % Plot true attention over recovered p(att)
@@ -135,8 +135,8 @@ ylabel('True latent state')
 title(['Latent state by recovered p(engaged) (' M.name ')'],'Interpreter','none')
 
 % Plot p(att) count
-data = nanmean(p_att_count,1);
-err = nanstd(p_att_count,1) / sqrt(size(p_att_count,1));
+data = nanmean(p_engaged_count,1);
+err = nanstd(p_engaged_count,1) / sqrt(size(p_engaged_count,1));
 subplot(1,2,2)
 bar(x,data,'FaceColor',[.5 .4 .8],'EdgeColor',[.8 .6 .9],'LineWidth',1.5)
 hold on
