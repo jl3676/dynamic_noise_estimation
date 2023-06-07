@@ -1,5 +1,5 @@
-# dynamic_noise_inference
- Public repository for the dynamic noise inference method paper
+# dynamic_noise_estimation
+ Public repository for the dynamic noise estimation method paper
 
 
 ### Simulations (Probabilistic_Reversal/)
