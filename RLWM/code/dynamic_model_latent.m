@@ -45,7 +45,7 @@ for block = blocks
     Q = (1/nA)*ones(ns,nA); % Q-values
     WM = (1/nA)*ones(ns,nA); % Working memory weights
     side = zeros(1,nA); % Side to stick to
-    p = [(1+lapse-rec)/2 (1-lapse+rec)/2]; % Probability vector for latent states
+    p = [(1+lapse-recover)/2 (1-lapse+recover)/2]; % Probability vector for latent states
 
     for k = 1:length(choices)
         tt = tt + 1;

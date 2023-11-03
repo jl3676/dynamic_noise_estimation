@@ -42,7 +42,7 @@ T = [1 - recover, lapse; recover, 1 - lapse];  % transition matrix for attention
 
 llh = 0;
 N = length(choice1short);
-p = [(1+lapse-rec)/2 (1-lapse+rec)/2];     % initialize p(att)
+p = [(1+lapse-recover)/2 (1-lapse+recover)/2];     % initialize p(att)
 latent = zeros(N, 2);       % latent variables
 
 %% Loop through each trial
