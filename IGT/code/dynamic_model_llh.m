@@ -40,7 +40,7 @@ nA = 4;    % Number of available actions
 explore = ones(nA, 1) / nA;
 exploit = ones(nA, 1) / nA;
 llh = 0;    % Cumulative log-likelihood
-p = [(1+lapse-rec)/2 (1-lapse+rec)/2]; % Probability that the latent state == 0 and 1 in the previous trial
+p = [lapse, 1 - lapse]; % Probability that the latent state == 0 and 1 in the previous trial
 
 % Iterate over trials
 for k = 1:length(choices)

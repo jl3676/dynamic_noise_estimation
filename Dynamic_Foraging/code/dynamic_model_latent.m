@@ -44,7 +44,7 @@ for s = sessions
     this_data = data.(s{1});
 
     Q = ones(1, nA) / nA;   % Initial action values
-    p = [(1+lapse-rec)/2 (1-lapse+rec)/2]; % Probability that the latent state == 0 and 1 in the previous trial
+    p = [lapse, 1 - lapse]; % Probability that the latent state == 0 and 1 in the previous trial
     err = 0;
 
     % Iterate over trials
