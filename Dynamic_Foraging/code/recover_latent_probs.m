@@ -30,6 +30,7 @@ end
 
 %% Perform Iterations
 num_subject_iterations = 30; % The number of repeats per subject
+num_rec = 100; % The number of times to recover latent states for each learning trajectory
 
 engaged_state = cell(length(subjects),1); % Cell array to store the true latent state for each subject
 p_engaged = cell(length(subjects),1); % Cell array to store the recovered p(engaged) for each subject
@@ -59,7 +60,7 @@ for iteration=1:num_iterations
 
     all_data = cell(num_subject_iterations,1); % Cell array to store the simulated data for each subject iteration
     all_latent_sim = cell(num_subject_iterations,1); % Cell array to store the latent state for each subject iteration
-    all_latent_rec = zeros(num_subject_iterations,ntrials); % Matrix to store the recovered latent state for each subject iteration and record
+    all_latent_rec = zeros(num_subject_iterations*num_rec,ntrials); % Matrix to store the recovered latent state for each subject iteration and record
 
     parfor subj_it=1:num_subject_iterations
         this_data = feval(model.name, theta, rewardStructs{iteration}); % Generate simulated data based on the dynamic model and reward structure
@@ -68,9 +69,12 @@ for iteration=1:num_iterations
         all_latent_sim{subj_it} = cat(2, latent_sim_cell{:})'; % Concatenate the "latent_att" values into a matrix
     end
 
-    parfor this_it=1:num_subject_iterations
-        data = all_data{this_it}; % Get the simulated data for the current subject iteration
-        latent_sim = all_latent_sim{this_it}; % Get the latent state for the current subject iteration
+    parfor this_it=1:num_subject_iterations*num_rec
+        subj_it = ceil(this_it/num_rec);
+        rec = rem(this_it-1,num_rec)+1;
+
+        data = all_data{subj_it}; % Get the simulated data for the current subject iteration
+        latent_sim = all_latent_sim{subj_it}; % Get the latent state for the current subject iteration
         
         this_latent_rec = feval([model.name '_latent'], theta, data); % Estimate the latent state using the dynamic model
         all_latent_rec(this_it,:) = this_latent_rec(:,1); % Store the recovered latent state
@@ -78,7 +82,7 @@ for iteration=1:num_iterations
 
     for subj_it=1:num_subject_iterations
         latent_sim = all_latent_sim{subj_it}; % Get the latent state for the current subject iteration
-        latent_rec = nanmean(all_latent_rec(subj_it,:)); % Calculate the average recovered latent state
+        latent_rec = nanmean(all_latent_rec((subj_it-1)*num_rec+1:subj_it*num_rec,:)); % Calculate the average recovered latent state
 
         subj_engaged_state = [subj_engaged_state latent_sim']; % Concatenate the true latent state for the current subject
         subj_p_engaged = [subj_p_engaged latent_rec]; % Concatenate the recovered p(engaged) for the current subject
