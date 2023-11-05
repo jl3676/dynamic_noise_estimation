@@ -63,7 +63,6 @@ p_engaged = cell(n_iters, 1);
 latent_st = cell(n_iters, 1);
 
 n_subj_its = 100;  % Number of subject iterations
-n_recs = 100;  % Number of recordings
 
 for it = 1:n_iters
     this_iter = this_iter + 1;
@@ -80,7 +79,7 @@ for it = 1:n_iters
     
     all_data = cell(n_subj_its, 1);
     all_latent_sim = cell(n_subj_its, 1);
-    all_latent_rec = zeros(n_subj_its * n_recs, ntrials);
+    all_latent_rec = zeros(n_subj_its, ntrials);
 
     % Generate data and latent states for each subject iteration
     parfor subj_it = 1:n_subj_its
@@ -90,17 +89,15 @@ for it = 1:n_iters
         all_latent_sim{subj_it} = latent_sim;
     end
         
-    parfor this_it = 1:n_subj_its * n_recs
-        subj_it = ceil(this_it / n_recs);
-        rec = rem(this_it - 1, n_recs) + 1;
-        this_data = all_data{subj_it};
+    parfor this_it = 1:n_subj_its
+        this_data = all_data{this_it};
         this_latent = feval([Ms{model_ind}.name '_latent'], theta, this_data);
         all_latent_rec(this_it, :) = this_latent(:, 1);
     end
 
     for subj_it = 1:n_subj_its
         latent_sim = all_latent_sim{subj_it};
-        latent_rec = nanmean(all_latent_rec((subj_it - 1) * n_recs + 1:subj_it * n_recs, :));
+        latent_rec = nanmean(all_latent_rec(subj_it, :));
 
         subj_latent_st = [subj_latent_st latent_sim'];
         subj_p_engaged = [subj_p_engaged latent_rec];

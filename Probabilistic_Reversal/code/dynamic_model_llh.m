@@ -31,7 +31,7 @@ rewards = data(:, 5);    % Get rewards from data - the rewards received by the p
 
 Q = ones(1, nA) / nA;   % Initial action values
 side = 0;              % Side to stick to (1 = A1, -1 = A2)
-p = [(1+lapse-recover)/2 (1-lapse+recover)/2];  % Probability that the latent state == 0 and 1 in the previous trial
+p = [lapse, 1 - lapse];  % Probability that the latent state == 0 and 1 in the previous trial
 llh = 0;               % Log-likelihood
 
 % Iterate over trials

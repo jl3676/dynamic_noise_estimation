@@ -148,12 +148,8 @@ for this_ID = 1:num_subjects
         static_choice_prob(this_ID,:) = static_choice_prob(this_ID,:) + latent(:,2)';
 
         % Simulate data using dynamic model
-        latent_st_traj = zeros(1,500);
-        for i = 1:20
-            latent = dynamic_model_latent(All_Params{2}(this_ID,:), this_data);
-            latent_st_traj = latent_st_traj + latent(:,1);
-        end
-        latent_st_traj = latent_st_traj / 20;
+        latent = dynamic_model_latent(All_Params{2}(this_ID,:), this_data);
+        latent_st_traj = latent(:,1);
         data_temp = dynamic_model(All_Params{2}(this_ID,:), latent_st_traj);
         latent = [data_temp(:,1) data_temp(:,end)];
         this_dynamic_sim_engaged(this_latent==1,:) = this_dynamic_sim_engaged(this_latent==1,:) + data_temp(this_latent==1,:);
