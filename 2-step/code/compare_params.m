@@ -15,7 +15,7 @@ load('ModelFit.mat')
 
 %% Plot parameter shifts from the static to dynamic model
 
-% Find the index of the static model and dynamic model
+% Find the indices of the static model and dynamic model
 model_static_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', false), 'static'));
 model_dynamic_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', false), 'dynamic'));
 
@@ -25,7 +25,7 @@ model_dynamic_ind = find(contains(cellfun(@(x) x.name, Ms, 'UniformOutput', fals
 % Create a figure for the plot
 figure('Position', [300, 300, 1500, 600])
 
-% Plot the parameter shift for each model parameter
+% Plot the shift for each model parameter
 for param = Ms{model_static_ind}.pnames(1:end-1)
     param_ind_1 = strcmp(Ms{model_static_ind}.pnames, param);
     param_ind_2 = strcmp(Ms{model_dynamic_ind}.pnames, param);

@@ -10,20 +10,17 @@
 %    - Load precomputed model fits from 'ModelFit.mat'.
 %    - Load behavioral data for the IGT task.
 %
-% 2. Prepare reward structure:
-%    - Create a reward structure for each subject based on the behavioral data.
-%
-% 3. Model identification and evaluation:
+% 2. Model identification and evaluation:
 %    - Iterate over the models and subjects.
 %    - Generate simulated data for each subject using the fitted parameters.
 %    - Fit each model to the simulated data and calculate the log-likelihood, AIC, and BIC.
 %    - Identify the best model for each subject based on AIC and BIC.
 %
-% 4. Reshape and save results:
+% 3. Save results:
 %    - Reshape the results for analysis and visualization.
 %    - Save the results in 'ModelID.mat'.
 %
-% 5. Visualize model identification results:
+% 4. Visualize model identification results:
 %    - Plot confusion matrices showing the accuracy of model identification using AIC and BIC.
 %    - Save the resulting plots as 'modelID.png' and 'modelID.svg'.
 %
@@ -92,7 +89,7 @@ for M1=1:size(Ms,2) % Iterate over models
                 % Initialize parameter values
                 par  = zeros(length(pmin),1);
                 for p_ind=1:length(pmin)
-                    par(p_ind) = pdfs{p_ind}(0); % Initialize parameters by sampling from the uniform distribution (0 is the random seed)
+                    par(p_ind) = pdfs{p_ind}(0); % Initialize parameters by sampling from a pre-defined distribution (0 is the random seed)
                 end
 
                 % Set starting values of dynamic model parameters to the best fit

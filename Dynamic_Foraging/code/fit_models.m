@@ -2,7 +2,7 @@
 % 
 % Description:
 % 1. Data Loading: The script loads the behavioral data from the 'data.mat' file.
-% 2. Model Definition: Two models, static_model and dynamic_model, are defined along with their parameter priors. These models capture different aspects of the behavioral data.
+% 2. Model Definition: Two models, static_model and dynamic_model, are defined along with their parameters. 
 % 3. Model Fitting: The script fits the defined models to each subject's data in parallel. It uses maximum likelihood estimation, employing the fmincon function and the GlobalSearch optimization algorithm.
 % 4. Fit Measures: Fit measures such as AIC and BIC are calculated to assess the quality of model fit.
 % 5. Model Comparison: The models are compared based on their AIC differences, providing insights into which model better explains the behavioral data.
@@ -44,13 +44,13 @@ forget_sample = @(x) unifrnd(0, 1); % Sampling function for forget parameter
 bias_sample = @(x) unifrnd(-1, 1); % Sampling function for bias parameter
 eps_sample = @(x) unifrnd(0, 1); % Sampling function for epsilon parameter
 phi_sample = @(x) unifrnd(0, 1); % Sampling function for phi parameter
-lapse_sample = @(x) unifrnd(0, 1); % Sampling function for lapse parameter (T_1^0)
-rec_sample = @(x) unifrnd(0, 1); % Sampling function for recover parameter (T_0^1)
+lapse_sample = @(x) unifrnd(0, 1); % Sampling function for lapse parameter (T_E^R)
+rec_sample = @(x) unifrnd(0, 1); % Sampling function for recover parameter (T_R^E)
 
 %% Define models
 Ms = [];
 
-% RL meta model
+% Static model
 curr_model = [];
 curr_model.name = 'static_model'; % Name of the model
 curr_model.pMin = [1e-6 1e-6 1e-6 1e-6 -1 1e-6 1e-6 1e-6]; % Minimum values for model parameters
@@ -59,7 +59,7 @@ curr_model.pdfs = {alpha_sample, alpha_sample, beta_sample, forget_sample, bias_
 curr_model.pnames = {'alpha-', 'alpha+', 'beta', 'forget', 'bias', 'alpha_v', 'phi', 'epsilon'}; % Names of model parameters
 Ms{1} = curr_model; % Add the model to the model list
 
-% RL meta lapse model
+% Dynamic model
 curr_model = [];
 curr_model.name = 'dynamic_model'; % Name of the model
 curr_model.pMin = [1e-6 1e-6 1e-6 1e-6 -1 1e-6 1e-6 1e-6 1e-6]; % Minimum values for model parameters
@@ -169,7 +169,7 @@ xlabel('sorted participant')
 set(gca, 'fontsize', 14)
 sgtitle(['Dynamic Foraging (p=' num2str(p) ')'])
 
-% Save figures (Fig 4)
+% Save figures 
 saveas(gcf, '../plots/fit.png')
 saveas(gcf, '../plots/fit.svg')
 

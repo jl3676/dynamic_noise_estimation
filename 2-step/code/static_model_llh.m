@@ -1,16 +1,36 @@
 function nllh = static_model_llh(theta, data)
-% static_model_llh computes the negative log likelihood (nllh) of the static model given the parameters (theta) and data.
+% Computes the negative log-likelihood of data given parameters (theta) for a static model.
+%
+% Inputs:
+%   - theta: Model parameters
+%         theta(1): alpha - learning rate
+%         theta(2): beta_mb - inverse softmax temperature parameter for
+%         model-based learning
+%         theta(3): beta_mf - inverse softmax temperature parameter for
+%         model-free learning
+%         theta(4): beta - inverse softmax temperature parameter for
+%         the second stage
+%         theta(5): lambda - discount factor between stages
+%         theta(6): stickiness - choice stickiness
+%         theta(7): epsilon - uniform level of noise
+%   - data (struct)
+%
+% Output:
+%   - nllh: Negative log-likelihood of the data given the model parameters
+%
+% Author: Jing-Jing Li (jl3676@berkeley.edu)
+% Last Modified: 5/28/2023
 
 % Parameters:
-alpha = theta(1);           % softmax inverse temperature
-beta_mb = theta(2);         % learning rate
-beta_mf = theta(3);         % eligibility trace decay
-beta = theta(4);            % mixing weight
-lambda = theta(5);          % stimulus stickiness
-stickiness = theta(6);      % response stickiness
-epsilon = theta(7);         % static noise parameter
-lapse = 0;                  % lapse
-recover = 1;                % recover
+alpha = theta(1);           % learning rate
+beta_mb = theta(2);         % softmax inverse temperature for model-based
+beta_mf = theta(3);         % softmax inverse temperature for model-free
+beta = theta(4);            % softmax inverse temperature for second stage
+lambda = theta(5);          % discount factor
+stickiness = theta(6);      % choice stickiness
+epsilon = theta(7);         % uniform level of noise
+lapse = 0;                  % lapse - not used in the static model
+recover = 1;                % recover - not used in the static model
 
 nA = 2;                     % number of actions
 
@@ -39,11 +59,11 @@ end
 
 Qd = zeros(3, 2);           % Q values for each state-action pair
 Tm = [.7, .3; .3, .7];      % transition matrix for first-stage states
-T = [1 - recover, lapse; recover, 1 - lapse];  % transition matrix for attention state
+T = [1 - recover, lapse; recover, 1 - lapse];  % transition matrix for latent states
 
 llh = 0;
 N = length(choice1short);
-p = [0, 1];                 % initialize p(att)
+p = [0, 1];                 % initialize p(engaged)
 latent = zeros(N, 2);       % latent variables
 
 %% Loop through each trial
@@ -93,5 +113,5 @@ for i = 1:N
     Qd(stateshort(i), choice2short(i)) = Qd(stateshort(i), choice2short(i)) + alpha * tdQ(2);
 end
 
-nllh = -llh;  % Return negative log likelihood
+nllh = -llh;  % Return negative log-likelihood
 end

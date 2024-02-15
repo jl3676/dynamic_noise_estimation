@@ -1,5 +1,6 @@
 function data = dynamic_model(theta, latent_st_traj)
-% Simulates data for the probabilistic reversal environment.
+% Simulates data for the probabilistic reversal environment using the 
+% dynamic noise estimation model.
 %
 % Inputs:
 %   - theta: Model parameters
@@ -7,17 +8,17 @@ function data = dynamic_model(theta, latent_st_traj)
 %         theta(2): stickiness - stickiness parameter
 %         theta(3): lapse - transition probability from engaged to random
 %         theta(4): recover - transition probability from random to engaged
-%   - latent_st_traj: a vector containing the probability trajectory of the
-%   latent engaged state trial by trial
+%   - latent_st_traj (optional): a vector containing the trial-by-trial 
+%         probability trajectory of the latent engaged state 
 %
 % Output:
 %   - data: Simulated data matrix
 %         Column 1: Engaged state (1 = engaged state, 0 = random state)
 %         Column 2: Correct choice (1 or 2)
-%         Column 3: Participant's choice
+%         Column 3: Agent's choice
 %         Column 4: Correctness of the choice (1 = correct, 0 = incorrect)
 %         Column 5: Reward received (1 = rewarded, 0 = not rewarded)
-%         Column 6: Probability of choosing the performed action
+%         Column 6: Probability of sampling the chosen action
 %
 % Author: Jing-Jing Li (jl3676@berkeley.edu)
 % Last Modified: 5/28/2023
@@ -31,11 +32,11 @@ lapse = theta(3);
 recover = theta(4);
 
 nA = 2;            % Number of actions
-noise = 0.8;       % Probability that correct choice is rewarded
+noise = 0.8;       % Amount of certainty in reward
 num_episodes = 10; % Number of episodes
 num_trials = 50;   % Number of trials per episode
 
-engaged = 1;          % Initial attentional state (1 = attentive state)
+engaged = 1;          % Initial latent state (1 = engaged state)
 Q = ones(1, nA) / nA; % Initialize action values
 data = zeros(num_episodes * num_trials, 6); % Data matrix to store simulated data
 
@@ -47,27 +48,28 @@ for ep = 1:num_episodes % Episode
     side = 0; % Side of stickiness; 1 = stick to A1, -1 = stick to A2
     for t = 1:num_trials
         k = k + 1;
-        data(k, 1) = engaged; % Store current attentional state in data matrix
+        data(k, 1) = engaged; % Store current latent state in data matrix
         
         if engaged == 1
-            pr = 1 / (1 + exp(beta * (Q(1) - Q(2) + side * stick))); % Probability of choosing action A1
+            pr = 1 / (1 + exp(beta * (Q(1) - Q(2) + side * stick))); % Probability of choosing action A2
             if rand < lapse
                 engaged = 0; % Lapse with a probability
             end
         else
-            pr = 0.5; % Probability of choosing action A1 during lapse state
+            pr = 0.5; % Probability of choosing action A2 during lapse state
             if rand < recover
                 engaged = 1; % Return to engaged state with a probability
             end
         end
 
+        % Use provided latent state trajectory if available
         if nargin > 1 
             engaged = rand < latent_st_traj(k);
         end
 
-        choice = 1 + (rand < pr); % Choose action A1 with probability pr
+        choice = 1 + (rand < pr); % Choose action A2 with probability pr
         if rand < epsilon
-            choice = randsample([1 2], 1); % Exploration: Choose randomly between actions A1 and A2
+            choice = randsample([1 2], 1); % Choose randomly between actions A1 and A2
         end
         correct = choice == cor; % Check correctness of choice
         if rand < noise

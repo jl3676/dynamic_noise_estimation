@@ -2,7 +2,7 @@
 % 
 % Description:
 % 1. Data Loading: The script loads the behavioral data from the 'data.mat' file.
-% 2. Model Definition: Two models, static_model and dynamic_model, are defined along with their parameter priors. These models capture different aspects of the behavioral data.
+% 2. Model Definition: Two models, static_model and dynamic_model, are defined along with their parameters. 
 % 3. Model Fitting: The script fits the defined models to each subject's data in parallel. It uses maximum likelihood estimation, employing the fmincon function and the GlobalSearch optimization algorithm.
 % 4. Fit Measures: Fit measures such as AIC and BIC are calculated to assess the quality of model fit.
 % 5. Model Comparison: The models are compared based on their AIC differences, providing insights into which model better explains the behavioral data.
@@ -34,7 +34,7 @@ load("../data/Alldata.mat")
 subjects = 1:size(data,2);
 
 %% Define priors of model parameters
-% Define functions to sample model parameters from uniform distributions
+% Define functions to sample model parameters from distributions
 alpha_sample = @(x) betarnd(1.1, 1.1);
 beta_sample = @(x) gamrnd(3,1);
 beta_mb_sample = @(x) gamrnd(3,1);
@@ -48,7 +48,7 @@ eps_sample = @(x) unifrnd(0, 1);
 %% Define models
 Ms = [];
 
-% RL meta model
+% Static model
 curr_model = [];
 curr_model.name = 'static_model';
 curr_model.pMin = [1e-6 1e-6 1e-6 1e-6 1e-6 -20 1e-6];
@@ -57,7 +57,7 @@ curr_model.pdfs = {alpha_sample, beta_mb_sample, beta_mf_sample, beta_sample, la
 curr_model.pnames = {'alpha','beta_mb','beta_mf','beta','lambda','stick','epsilon'};
 Ms{1} = curr_model; % Add the model to the model list
 
-% RL meta lapse model
+% Dynamic model
 curr_model = [];
 curr_model.name = 'dynamic_model'; % Name of the model
 curr_model.pMin = [1e-6 1e-6 1e-6 1e-6 1e-6 -20 1e-6 1e-6];
@@ -167,7 +167,7 @@ xlabel('sorted participant')
 set(gca, 'fontsize', 14)
 sgtitle(['2-step (p=' num2str(p) ')'])
 
-% Save figures (Fig 4)
+% Save figures
 saveas(gcf, '../plots/fit.png')
 saveas(gcf, '../plots/fit.svg')
 

@@ -1,13 +1,34 @@
 function nllh = dynamic_model_llh(theta, data)
-% dynamic_model_llh computes the negative log likelihood (nllh) of the dynamic model given the parameters (theta) and data.
+% Computes the negative log-likelihood of data given parameters (theta) for a dynamic model.
+%
+% Inputs:
+%   - theta: Model parameters
+%         theta(1): alpha - learning rate
+%         theta(2): beta_mb - inverse softmax temperature parameter for
+%         model-based learning
+%         theta(3): beta_mf - inverse softmax temperature parameter for
+%         model-free learning
+%         theta(4): beta - inverse softmax temperature parameter for
+%         the second stage
+%         theta(5): lambda - discount factor between stages
+%         theta(6): stickiness - choice stickiness
+%         theta(7): lapse - transition probability from engaged to random
+%         theta(8): recover - transition probability from random to engaged
+%   - data (struct)
+%
+% Output:
+%   - nllh: Negative log-likelihood of the data given the model parameters
+%
+% Author: Jing-Jing Li (jl3676@berkeley.edu)
+% Last Modified: 5/28/2023
 
 % Parameters:
-alpha = theta(1);           % softmax inverse temperature
-beta_mb = theta(2);         % learning rate
-beta_mf = theta(3);         % eligibility trace decay
-beta = theta(4);            % mixing weight
-lambda = theta(5);          % stimulus stickiness
-stickiness = theta(6);      % response stickiness
+alpha = theta(1);           % learning rate
+beta_mb = theta(2);         % softmax inverse temperature for model-based
+beta_mf = theta(3);         % softmax inverse temperature for model-free
+beta = theta(4);            % softmax inverse temperature for second stage
+lambda = theta(5);          % discount factor
+stickiness = theta(6);      % choice stickiness
 lapse = theta(7);           % lapse
 recover = theta(8);         % recover
 
@@ -38,11 +59,11 @@ end
 
 Qd = zeros(3, 2);           % Q values for each state-action pair
 Tm = [.7, .3; .3, .7];      % transition matrix for first-stage states
-T = [1 - recover, lapse; recover, 1 - lapse];  % transition matrix for attention state
+T = [1 - recover, lapse; recover, 1 - lapse];  % transition matrix for latent states
 
 llh = 0;
 N = length(choice1short);
-p = [lapse, 1 - lapse];     % initialize p(att)
+p = [lapse, 1 - lapse];     % initialize p(engaged)
 latent = zeros(N, 2);       % latent variables
 
 %% Loop through each trial
@@ -94,4 +115,4 @@ for i = 1:N
     Qd(stateshort(i), choice2short(i)) = Qd(stateshort(i), choice2short(i)) + alpha * tdQ(2);
 end
 
-nllh = -llh;  % return negative log likelihood
+nllh = -llh;  % return negative log-likelihood

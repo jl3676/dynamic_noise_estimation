@@ -1,6 +1,3 @@
-
- 
-
 function s = logsumexp(x,dim)
     
     % Returns log(sum(exp(x),dim)) while avoiding numerical underflow.

@@ -1,16 +1,37 @@
 function data = static_model(theta)
-% static_model simulates data based on the static model given the parameters (theta).
+% Simulates data for the 2-step environment using the static noise estimation model.
+%
+% Inputs:
+%   - theta: Model parameters
+%         theta(1): alpha - learning rate
+%         theta(2): beta_mb - inverse softmax temperature parameter for
+%         model-based learning
+%         theta(3): beta_mf - inverse softmax temperature parameter for
+%         model-free learning
+%         theta(4): beta - inverse softmax temperature parameter for
+%         the second stage
+%         theta(5): lambda - discount factor between stages
+%         theta(6): stickiness - choice stickiness
+%         theta(7): epsilon - uniform level of noise
+%   - latent_st_traj (optional): a vector containing the trial-by-trial 
+%         probability trajectory of the latent engaged state 
+%
+% Output:
+%   - data (struct): Simulated data
+%
+% Author: Jing-Jing Li (jl3676@berkeley.edu)
+% Last Modified: 5/28/2023
 
 % Parameters:
-alpha = theta(1);           % softmax inverse temperature
-beta_mb = theta(2);         % learning rate
-beta_mf = theta(3);         % eligibility trace decay
-beta = theta(4);            % mixing weight
-lambda = theta(5);          % stimulus stickiness
-stickiness = theta(6);      % response stickiness
-epsilon = theta(7);
-lapse = 0;                  % lapse
-recover = 1;                % recover
+alpha = theta(1);           % learning rate
+beta_mb = theta(2);         % softmax inverse temperature for model-based
+beta_mf = theta(3);         % softmax inverse temperature for model-free
+beta = theta(4);            % softmax inverse temperature for second stage
+lambda = theta(5);          % discount factor
+stickiness = theta(6);      % choice stickiness
+epsilon = theta(7);         % uniform level of noise
+lapse = 0;                  % lapse - not used in the static model
+recover = 1;                % recover - not used in the static model
 
 N = 200;
 

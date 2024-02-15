@@ -8,8 +8,8 @@ function latent = dynamic_model_latent(theta, data)
 %     - theta(3): Sensitivity parameter (sensitivity)
 %     - theta(4): Decay rate (decay)
 %     - theta(5): Exploration rate (phi)
-%     - theta(6): Lapse rate (lapse)
-%     - theta(7): Recover rate (recover)
+%     - theta(6): Lapse rate while in the engaged state (lapse)
+%     - theta(7): Recover rate from random to engaged (recover)
 %   - data: Experimental data. It is an N-by-3 matrix, where N is the number of trials. Each row contains the following information:
 %     - data(:, 1): Choices made by the subject
 %     - data(:, 2): Rewards received by the subject
@@ -17,6 +17,9 @@ function latent = dynamic_model_latent(theta, data)
 %
 % Output:
 %   - latent: latent state and choice probability trajectories 
+%
+% Author: Jing-Jing Li (jl3676@berkeley.edu)
+% Last Modified: 5/28/2023
 
 % Extract parameter values
 alpha = theta(1);     % Learning rate
@@ -24,11 +27,11 @@ beta = theta(2);      % Inverse temperature
 sensitivity = theta(3);     % Sensitivity
 decay = theta(4);     % Decay rate
 phi = theta(5);       % Exploration rate
-epsilon = 0;          % Epsilon parameter for static noise
+epsilon = 0;          % Epsilon parameter for static noise - not used in dynamic model
 lapse = theta(6);     % Lapse rate
 recover = theta(7);   % Recover rate
 
-% Transition probability matrix for latent attentional state
+% Transition probability matrix for latent states
 T = [1 - recover, lapse; recover, 1 - lapse];
 
 choices = data(:, 1);    % Choices from data
@@ -41,6 +44,8 @@ explore = ones(nA, 1) / nA;
 exploit = ones(nA, 1) / nA;
 llh = 0;    % Cumulative log-likelihood
 p = [lapse, 1 - lapse]; % Probability that the latent state == 0 and 1 in the previous trial
+
+latent = zeros(length(choices), 2); % Initialize matrix to store latent information
 
 % Iterate over trials
 for k = 1:length(choices)

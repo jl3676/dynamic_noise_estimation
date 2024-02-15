@@ -1,7 +1,5 @@
 function latent = dynamic_model_latent(theta, data)
-% Computes the full negative log likelihood of data given parameters (theta)
-% and returns the latent state probability and choice probability
-% trajectories.
+% Computes the latent state probability and choice probability trajectories.
 %
 % Input:
 %   - theta: Model parameters (1x9 vector)
@@ -33,7 +31,6 @@ lapse = theta(8);       % Lapse parameter
 recover = theta(9);     % Recover parameter
 
 T = [1 - recover, lapse; recover, 1 - lapse]; % Transition probability matrix for latent policy states
-llh = 0;
 nA = 2; % Number of actions
 
 sessions = fieldnames(data)';
@@ -66,7 +63,6 @@ for s = sessions
         b(1) = 1 - b(2);
            
         lt = log((1/nA) * p(1) + b(choice) * p(2)); % Log-likelihood contribution of the trial
-        llh = llh + lt; % Accumulate log-likelihood
 
         % Update probability for latent state == 0 and 1 in the current trial using Bayes' rule
         p = ((1/nA) * p(1) * T(:, 1) + b(choice) * p(2) * T(:, 2)) / exp(lt);
@@ -90,7 +86,5 @@ for s = sessions
         Q(3 - choice) = forget * Q(3 - choice);
     end
 end
-
-nllh = -llh; % Return the negative log-likelihood
 
 end

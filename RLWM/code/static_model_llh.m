@@ -1,23 +1,29 @@
 function nllh = static_model_llh(theta,K,data)
-% Computes the negative log-likelihood (nllh) of the static model for the RLWM task given the model parameters and the observed data.
-
+% Computes the negative log-likelihood of the data given model parameters. 
+%
 % Inputs:
-%   - theta: Model parameters for the static model.
-%   - K: Working memory capacity (integer). 
-%   - data: Observed data containing stimuli, choices, rewards, set sizes, and blocks.
+%   - theta: A vector of model parameters [alpha, bias, stick, rho, forget, lapse, recover].
+%   - K (int): A hyper-parameter defining working memory capacity.
+%   - data: A matrix representing real experimental data, used to inform set sizes and block structure.
 
 % Outputs:
 %   - nllh: Negative log-likelihood of the static model.
+%
+% Author: Jing-Jing Li (jl3676@berkeley.edu)
+% Last Modified: 5/28/2023
 
-alpha = theta(1);
-beta = 20; % Fixed value for beta parameter
-bias = theta(2);
-stick = theta(3);
-rho = theta(4);
-forget = theta(5);
-epsilon = theta(6);
-lapse = 0;
-recover = 1;
+% Fixed model parameter for softmax action selection, controls sharpness of action probabilities
+beta = 20;
+
+% Unpack model parameters from input vector theta
+alpha = theta(1);  % Learning rate for the RL process
+bias = theta(2);   % Modifies learning rate and WM update based on outcome
+stick = theta(3);  % Stickiness bias
+rho = theta(4);    % Working memory weight
+forget = theta(5); % Forgetting rate for working memory
+epsilon = theta(6);% Uniform level of noise
+lapse = 0;         % Probability of transitioning from engaged to random - not used in static model
+recover = 1;       % Probability of transitioning from random to engaged - not used in static model
 
 T = [1-recover lapse;recover 1-lapse]; % Transition matrix
 

@@ -1,5 +1,6 @@
 function nllh = dynamic_model_llh(theta, data)
-% Computes the full negative log likelihood of data given parameters (theta).
+% Computes the full negative log likelihood of data given parameters (theta) 
+% for the dynamic model.
 %
 % Inputs:
 %   - theta: Parameter values for the dynamic model. It is a vector with the following elements:
@@ -8,15 +9,15 @@ function nllh = dynamic_model_llh(theta, data)
 %     - theta(3): Sensitivity parameter (sensitivity)
 %     - theta(4): Decay rate (decay)
 %     - theta(5): Exploration rate (phi)
-%     - theta(6): Lapse rate (lapse)
-%     - theta(7): Recover rate (recover)
+%     - theta(6): Lapse rate while in the engaged state (lapse)
+%     - theta(7): Recover rate from random to engaged (recover)
 %   - data: Experimental data. It is an N-by-3 matrix, where N is the number of trials. Each row contains the following information:
 %     - data(:, 1): Choices made by the subject
 %     - data(:, 2): Rewards received by the subject
 %     - data(:, 3): Losses received by the subject
 %
 % Output:
-%   - nllh: Negative log likelihood of the data given the model parameters (theta)
+%   - nllh: Negative log-likelihood of the data given the model parameters (theta)
 
 % Extract parameter values
 alpha = theta(1);     % Learning rate
@@ -24,11 +25,11 @@ beta = theta(2);      % Inverse temperature
 sensitivity = theta(3);     % Sensitivity
 decay = theta(4);     % Decay rate
 phi = theta(5);       % Exploration rate
-epsilon = 0;          % Epsilon parameter for static noise
+epsilon = 0;          % Epsilon parameter for static noise - not used in dynamic model
 lapse = theta(6);     % Lapse rate
 recover = theta(7);   % Recover rate
 
-% Transition probability matrix for latent attentional state
+% Transition probability matrix for latent states
 T = [1 - recover, lapse; recover, 1 - lapse];
 
 choices = data(:, 1);    % Choices from data

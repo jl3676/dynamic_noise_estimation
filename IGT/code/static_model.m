@@ -2,25 +2,37 @@ function data = static_model(theta, payoff, num_trials, p_latent)
 % Generates data for the Iowa Gambling Task (IGT) using the static model.
 %
 % Inputs:
-%   - theta: Model parameters [alpha, beta, sensitivity, decay, phi, epsilon].
+%   - theta: Parameter values for the dynamic model. It is a vector with the following elements:
+%     - theta(1): Learning rate (alpha)
+%     - theta(2): Inverse temperature (beta)
+%     - theta(3): Sensitivity parameter (sensitivity)
+%     - theta(4): Decay rate (decay)
+%     - theta(5): Exploration rate (phi)
+%     - theta(6): Uniform level of noise (epsilon)
 %   - payoff: Payoff schedule identifier.
 %   - num_trials: Number of trials to generate.
-%   - p_latent (optional): Probability of latent attentional state (0 or 1) for each trial.
+%   - p_latent (optional): Probability of latent state = 1 (0 or 1) for each trial.
 %
 % Output:
 %   - data: Generated data matrix of size (num_trials x 3) containing choice, gain, and loss for each trial.
+%     - data(:, 1): Choices made by the subject
+%     - data(:, 2): Rewards received by the subject
+%     - data(:, 3): Losses received by the subject
+%
+% Author: Jing-Jing Li (jl3676@berkeley.edu)
+% Last Modified: 5/28/2023
 
-alpha = theta(1);
-beta = theta(2);
-sensitivity = theta(3);
-decay = theta(4);
-phi = theta(5);
-epsilon = theta(6);
-lapse = 0;
-recover = 1;
+alpha = theta(1);     % Learning rate
+beta = theta(2);      % Inverse temperature
+sensitivity = theta(3);     % Sensitivity
+decay = theta(4);     % Decay rate
+phi = theta(5);       % Exploration rate
+epsilon = theta(6);   % Uniform level of noise
+lapse = 0;            % Lapse rate - not used in static model
+recover = 1;          % Recover rate - not used in static model
 
 engaged = 1;
-nA = 4;
+nA = 4; % Number of available actions
 
 Q = ones(nA,1) / nA;
 explore = ones(nA,1) / nA;

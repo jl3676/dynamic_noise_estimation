@@ -2,13 +2,26 @@ function data = dynamic_model(theta, payoff, num_trials, p_latent)
 % Generates data for the Iowa Gambling Task (IGT) using the dynamic model.
 %
 % Inputs:
-%   - theta: Model parameters [alpha, beta, sensitivity, decay, phi, lapse, recover].
+%   - theta: Parameter values for the dynamic model. It is a vector with the following elements:
+%     - theta(1): Learning rate (alpha)
+%     - theta(2): Inverse temperature (beta)
+%     - theta(3): Sensitivity parameter (sensitivity)
+%     - theta(4): Decay rate (decay)
+%     - theta(5): Exploration rate (phi)
+%     - theta(6): Lapse rate while in the engaged state (lapse)
+%     - theta(7): Recover rate from random to engaged (recover)
 %   - payoff: Payoff schedule identifier.
 %   - num_trials: Number of trials to generate.
-%   - p_latent (optional): Probability of latent attentional state (0 or 1) for each trial.
+%   - p_latent (optional): Probability of latent state = 1 (0 or 1) for each trial.
 %
 % Output:
 %   - data: Generated data matrix of size (num_trials x 3) containing choice, gain, and loss for each trial.
+%     - data(:, 1): Choices made by the subject
+%     - data(:, 2): Rewards received by the subject
+%     - data(:, 3): Losses received by the subject
+%
+% Author: Jing-Jing Li (jl3676@berkeley.edu)
+% Last Modified: 5/28/2023
 
 alpha = theta(1);
 beta = theta(2);

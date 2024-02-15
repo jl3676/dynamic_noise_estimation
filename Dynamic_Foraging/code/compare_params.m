@@ -1,6 +1,11 @@
 % This script performs various analyses based on the fitted model parameters
 % obtained from ModelFit.mat. It generates plots to compare different models
 % and visualize relationships between parameters.
+% 
+% Dependencies:
+% - Optimization Toolbox (fmincon)
+% - Global Optimization Toolbox
+% - Parallel Computing Toolbox (for parallel execution)
 %
 % Author: Jing-Jing Li (jl3676@berkeley.edu)
 % Last Modified: 5/28/2023

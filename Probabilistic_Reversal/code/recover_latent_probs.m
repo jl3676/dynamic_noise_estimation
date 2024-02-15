@@ -11,7 +11,7 @@ options = optimoptions('fmincon','Display','off');
 % Create a cell array to store the models
 Ms = [];
 
-% Define the static model and its parameter limits
+% Define the static model and its parameter bounds
 curr_model = [];
 curr_model.name = 'static_model';
 curr_model.pMin = [1e-6, -1, 1e-6];
@@ -21,7 +21,7 @@ curr_model.pnames = {'alpha', 'stick', 'epsilon'};
 % Add the static model to the list of models
 Ms{1} = curr_model;
 
-% Define the dynamic model and its parameter limits
+% Define the dynamic model and its parameter bounds
 curr_model = [];
 curr_model.name = 'dynamic_model';
 curr_model.pMin = [1e-6, -1, 1e-6, 1e-6];
@@ -62,13 +62,13 @@ this_iter = 0;
 p_engaged = cell(n_iters, 1);
 latent_st = cell(n_iters, 1);
 
-n_subj_its = 100;  % Number of subject iterations
+n_subj_its = 100;  % Number of subjects to simulate
 
 for it = 1:n_iters
     this_iter = this_iter + 1;
     waitbar(this_iter/total_iters, f, sprintf('Progress: %d %%', floor(this_iter/total_iters*100)));  % Update progress bar
     
-    % Generate random parameter values for the model
+    % Sample initial parameter values for the model
     theta = zeros(length(pmin), 1);
     for p = 1:length(pmin)
         theta(p) = sampling_funcs{p}(0);
@@ -157,7 +157,7 @@ ylabel('True latent state')
 
 title(['Attention state by recovered p(engaged) (' Ms{model_ind}.name ')'], 'Interpreter', 'none')
 
-% plot p(att) count
+% plot p(engaged) count
 data = nanmean(p_engaged_count, 1);
 err = nanstd(p_engaged_count, 1) / sqrt(size(p_engaged_count, 1));
 subplot(1, 2, 2)

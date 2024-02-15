@@ -1,13 +1,35 @@
 function data = dynamic_model(theta, latent_st_traj)
-% dynamic_model simulates data based on the dynamic model given the parameters (theta) and latent state trajectory (latent_st_traj).
+% Simulates data for the 2-step environment using the dynamic noise estimation model.
+%
+% Inputs:
+%   - theta: Model parameters
+%         theta(1): alpha - learning rate
+%         theta(2): beta_mb - inverse softmax temperature parameter for
+%         model-based learning
+%         theta(3): beta_mf - inverse softmax temperature parameter for
+%         model-free learning
+%         theta(4): beta - inverse softmax temperature parameter for
+%         the second stage
+%         theta(5): lambda - discount factor between stages
+%         theta(6): stickiness - choice stickiness
+%         theta(7): lapse - transition probability from engaged to random
+%         theta(8): recover - transition probability from random to engaged
+%   - latent_st_traj (optional): a vector containing the trial-by-trial 
+%         probability trajectory of the latent engaged state 
+%
+% Output:
+%   - data (struct): Simulated data
+%
+% Author: Jing-Jing Li (jl3676@berkeley.edu)
+% Last Modified: 5/28/2023
 
 % Parameters:
-alpha = theta(1);           % softmax inverse temperature
-beta_mb = theta(2);         % learning rate
-beta_mf = theta(3);         % eligibility trace decay
-beta = theta(4);            % mixing weight
-lambda = theta(5);          % stimulus stickiness
-stickiness = theta(6);      % response stickiness
+alpha = theta(1);           % learning rate
+beta_mb = theta(2);         % softmax inverse temperature for model-based
+beta_mf = theta(3);         % softmax inverse temperature for model-free
+beta = theta(4);            % softmax inverse temperature for second stage
+lambda = theta(5);          % discount factor
+stickiness = theta(6);      % choice stickiness
 lapse = theta(7);           % lapse
 recover = theta(8);         % recover
 
@@ -25,7 +47,7 @@ transition = cell(N, 1);
 reward_table = readmatrix('../data/masterprob4.csv');
 
 Qd = zeros(3, 2);           % Q values for each state-action pair
-tr = 0.7;                   % common transition probability
+tr = 0.7;                   % transition probability
 Tm = [.7, .3; .3, .7];      % transition matrix for first-stage states
 priorchoice = [0, 0];
 

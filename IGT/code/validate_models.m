@@ -20,7 +20,7 @@
 %    - Iterate over the static and dynamic models.
 %    - Generate simulated data for each subject using the fitted parameters.
 %    - Calculate the frequencies of deck choices for the simulated data.
-%    - Calculate the prediction accuracy by comparing the simulated data with the actual data.
+%    - Compare the simulated data with the actual data.
 %
 % 4. Plot model validation results:
 %    - Generate bar plots to compare the frequencies of deck choices between the models and human behavior.

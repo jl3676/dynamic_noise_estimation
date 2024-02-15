@@ -1,16 +1,20 @@
 function latent = dynamic_model_latent(theta, K, data)
 % Computes the latent states and choice probability trajectories based on the dynamic RLWM model.
 % This function calculates the latent states throughout the RLWM task, given a set of parameters 
-% and observed data.
+% and observed data. It's useful for understanding how well the model fits the observed data and 
+% for inferring the underlying cognitive processes during the task.
 %
 % Inputs:
-%   - theta: A vector of model parameters [alpha, bias, stick, rho, forget, lapse, recover].
-%   - K (int): A hyper-parameter defining working memory capacity.
-%   - data: A matrix representing real experimental data, used to inform set sizes and block structure.
+%   - theta: Model parameters for the RLWM model, including learning rates, biases, and probabilities
+%     for engagement transitions.
+%   - K (int): A hyper-parameter defining working memory capacity, influencing how working memory
+%     is weighted in decision making.
+%   - data: Observed data matrix from an experiment, containing columns for stimuli, choices, rewards,
+%     set sizes, and block identifiers.
 %
 % Outputs:
 %   - latent: A matrix containing the latent state probabilities and choice probabilities for each
-%     trial.
+%     trial. This output helps in analyzing the model's dynamics and its fit to the data.
 %
 % Author: Jing-Jing Li (jl3676@berkeley.edu)
 % Last Modified: 5/28/2023
@@ -19,16 +23,16 @@ function latent = dynamic_model_latent(theta, K, data)
 beta = 20;
 
 % Unpack model parameters from input vector theta
-alpha = theta(1);  % Learning rate for the RL process
-bias = theta(2);   % Modifies learning rate and WM update based on outcome
-stick = theta(3);  % Stickiness bias
-rho = theta(4);    % Working memory weight
-forget = theta(5); % Forgetting rate for working memory
-epsilon = 0;       % Uniform level of noise - not used in dynamic model
-lapse = theta(6);  % Probability of transitioning from engaged to random
-recover = theta(7);% Probability of transitioning from random to engaged
+alpha = theta(1);      % Learning rate for RL updates
+bias = theta(2);       % Modifies learning rate and updates based on outcome
+stick = theta(3);      % Bias towards repeating the previous action
+rho = theta(4);        % Weight of working memory in decision making
+forget = theta(5);     % Rate at which information is forgotten from working memory
+epsilon = 0;           % For numerical stability, not used in actual model updates
+lapse = theta(6);      % Probability of disengaging (switching to a random strategy)
+recover = theta(7);    % Probability of re-engaging (switching back to the model strategy)
 
-% Transition matrix for engaged/random states
+% Transition matrix for engaged/disengaged states
 T = [1-recover lapse; recover 1-lapse];
 
 % Extract trial information from the data matrix
@@ -59,7 +63,7 @@ for block = blocks
     Q = (1 / nA) * ones(ns, nA);
     WM = (1 / nA) * ones(ns, nA);
     side = zeros(1, nA); % Initialize side preference as none
-    p = [lapse 1-lapse]; % Initial probabilities for latent states (random, engaged)
+    p = [lapse 1-lapse]; % Initial probabilities for latent states (disengaged, engaged)
 
     % Process each trial in the current block
     for k = 1:length(choices)
@@ -100,7 +104,7 @@ for block = blocks
         Q(s,choice) = Q(s,choice) + alphaRL * (r - Q(s,choice)); % Update Q-value
         WM(s,choice) = WM(s,choice) + alphaWM * (r - WM(s,choice)); % Update WM
 
-        % Reset side and update for the chosen action
+        % Reset side preference and update for the chosen action
         side = zeros(1, nA);
         side(choice) = 1;
     end

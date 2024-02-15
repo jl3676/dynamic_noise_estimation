@@ -1,7 +1,7 @@
 % IGT Model Fitting Script
 %
 % This script performs model fitting for the Iowa Gambling Task (IGT) data using two models: static_model and dynamic_model.
-% The script loads the IGT data for a specified number of trials, defines the priors for the model parameters,
+% The script loads the IGT data for a specified number of trials, defines the model parameters,
 % and fits the models to the data using global optimization (GlobalSearch) and maximum likelihood estimation.
 % The script then calculates fit measures (AIC, BIC, etc.) for each model and plots the model comparison results.
 %
@@ -30,12 +30,12 @@ subjects = unique(data_choice.Var1);
 % Define functions to sample model parameters from uniform distributions
 beta_sample = @(x) unifrnd(0, 20); % Sampling function for beta parameter
 alpha_sample = @(x) unifrnd(0, 1); % Sampling function for alpha parameter
-sensitivity_sample = @(x) unifrnd(0, 1); 
+sensitivity_sample = @(x) unifrnd(0, 1); % Sampling function for sensitivity parameter
 decay_sample = @(x) unifrnd(0, 1); % Sampling function for decay parameter
 phi_sample = @(x) unifrnd(0, 200); % Sampling function for phi parameter
 eps_sample = @(x) unifrnd(0, 1); % Sampling function for epsilon parameter
-lapse_sample = @(x) unifrnd(0, 1); % Sampling function for lapse parameter (T_1^0)
-rec_sample = @(x) unifrnd(0, 1); % Sampling function for recover parameter (T_0^1)
+lapse_sample = @(x) unifrnd(0, 1); % Sampling function for lapse parameter (T_E^R)
+rec_sample = @(x) unifrnd(0, 1); % Sampling function for recover parameter (T_R^E)
 
 %% Define models
 Ms = [];
@@ -157,7 +157,7 @@ xlabel('sorted participant')
 set(gca, 'fontsize', 14)
 sgtitle(['IGT (p=' num2str(p) ')'])
 
-% Save figures (Fig 4)
+% Save figures
 saveas(gcf, '../plots/fit.png')
 saveas(gcf, '../plots/fit.svg')
 

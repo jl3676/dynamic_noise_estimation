@@ -1,6 +1,20 @@
+%% Generate and Recover Analysis Script
+
 % This script runs the "generate and recover" process for model parameters.
-% It generates simulated data using two predefined models, static and dynamic,
-% and then attempts to recover the model parameters using optimization methods.
+% It generates simulated data using the dynamic model and recovers the model 
+% parameters using maximum-likelihood estimation with the dynamic model.
+% 
+% Dependencies:
+%   - Optimization Toolbox (fmincon)
+%   - Global Optimization Toolbox
+%   - Parallel Computing Toolbox (for parallel execution)
+%
+% Author: Jing-Jing Li (jl3676@berkeley.edu)
+% Last Modified: 5/28/2023
+
+% This script runs the "generate and recover" process for model parameters.
+% It generates simulated data using the dynamic model and recovers the model 
+% parameters using maximum-likelihood estimation with the dynamic model.
 
 clear all;
 
@@ -11,7 +25,7 @@ options = optimoptions('fmincon','Display','off');
 % Create a cell array to store the models
 Ms = [];
 
-% Define the static model and its parameter limits
+% Define the static model and its parameter bounds
 curr_model = [];
 curr_model.name = 'static_model';
 curr_model.pMin = [1e-6, -1, 1e-6];
@@ -21,7 +35,7 @@ curr_model.pnames = {'alpha', 'stick', 'epsilon'};
 % Add the static model to the list of models
 Ms{1} = curr_model;
 
-% Define the dynamic model and its parameter limits
+% Define the dynamic model and its parameter bounds
 curr_model = [];
 curr_model.name = 'dynamic_model';
 curr_model.pMin = [1e-6, -1, 1e-6, 1e-6];

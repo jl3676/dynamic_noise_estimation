@@ -1,13 +1,13 @@
 # dynamic_noise_estimation
- Public repository for the dynamic noise estimation method paper
+ Public repository for the dynamic noise estimation method paper. Please cite: Li, J. J., Shi, C., Li, L., & Collins, A. G. (2023). Dynamic noise estimation: A generalized method for modeling noise fluctuations in decision-making. bioRxiv, 2023-06.
 
 
 ### Simulations (Probabilistic_Reversal/)
-- code/simulate_lapses.m: analysis code for simulating data with attentional lapses and comparing the static and dynamic models (Fig 2)
+- code/simulate_lapses.m: analysis code for simulating data with lapses of attention and comparing the static and dynamic models (Fig 2)
 - code/validate_models.m: validation analysis for both models against data simulated by the dynamic model (Fig 3)
 
 
-### Empirical data (task/data/)
+### Empirical data ([task]/data/)
 - Dynamic_Foraging (Grossman et al., 2022)
     - Public data repository: https://datadryad.org/stash/dataset/doi:10.5061/dryad.cz8w9gj4s
 - IGT (Steingroever et al., 2015)
@@ -19,16 +19,16 @@
     - Public data repository: https://osf.io/we89v/
     - data_processing_scripts/concatenate_mats.m was created by Jing-Jing Li to reorganize the data structure
 
-### Modeling scripts for empirical datasets (task/code/)
+### Modeling scripts for empirical datasets ([task]/code/)
 - static_model_llh.m and dynamic_model_llh.m: functions to compute the negative log likelihoods of data given the static and dynamic model parameters
 - static_model.m and dynamic_model.m: functions to generate data using the static and dynamic models
 - fit_models.m: model fitting code for the static and dynamic models (Fig 4)
-- compare_params.m: compares the same parameters between the best-fit values of the static and dynamic models (Fig 5, Fig 6, S4_Fig)
-- identify_models.m: model identification analysis for both the static and dynamic models (S1_Fig)
-- recover_params.m: generate and recover analysis for parameters of the dynamic model (S3_Fig)
-- recover_latent_probs.m: recovery analysis of $\lambda(1)$ trajectory (S3_Fig)
-- validate_models.m: validation analysis against behavior for both models (S2_Fig)
+- compare_params.m: compares the same parameters between the best-fit values of the static and dynamic models (Fig 5, Fig 6, Fig A11)
+- identify_models.m: model identification analysis for both the static and dynamic models (Fig A8)
+- recover_params.m: generate and recover analysis for parameters of the dynamic model (Fig A10)
+- recover_latent_probs.m: recovery analysis of $\lambda(1)$ trajectory (Fig A10)
+- validate_models.m: validation analysis against behavior for both models (Fig A9)
 
-### Plots (task/plots/)
+### Plots ([task]/plots/)
 - Output plots for all figures in .png and .svg
 

@@ -1,5 +1,5 @@
 function data = static_model(theta, rewardStruct)
-% Simulates data for the probabilistic reversal environment using a static RL model.
+% Simulates data for the Dynamic Foraging environment using a static RL model.
 %
 % Inputs:
 %   - theta: Model parameters (1x8 vector)

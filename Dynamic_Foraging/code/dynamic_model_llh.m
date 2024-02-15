@@ -1,5 +1,5 @@
 function nllh = dynamic_model_llh(theta, data)
-% Computes the full negative log likelihood of data given parameters (theta).
+% Computes the full negative log-likelihood of data given parameters (theta).
 %
 % Input:
 %   - theta: Model parameters (1x9 vector)
@@ -14,7 +14,7 @@ function nllh = dynamic_model_llh(theta, data)
 %   - data: Struct containing behavioral data
 %
 % Output:
-%   - nllh: Negative log likelihood of the data given the parameters
+%   - nllh: Negative log-likelihood of the data given the parameters
 %
 % Author: Jing-Jing Li (jl3676@berkeley.edu)
 % Last Modified: 5/28/2023

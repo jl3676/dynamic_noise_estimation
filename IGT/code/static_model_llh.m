@@ -1,5 +1,5 @@
 function nllh = static_model_llh(theta, data)
-% Computes the full negative log likelihood of data given parameters (theta).
+% Computes the full negative log-likelihood of data given parameters (theta).
 %
 % Inputs:
 %   - theta: Parameter values for the dynamic model. It is a vector with the following elements:
@@ -15,7 +15,7 @@ function nllh = static_model_llh(theta, data)
 %     - data(:, 3): Losses received by the subject
 %
 % Output:
-%   - nllh: Negative log likelihood of the data given the model parameters (theta)
+%   - nllh: Negative log-likelihood of the data given the model parameters (theta)
 
 % Extract parameter values
 alpha = theta(1);     % Learning rate
@@ -23,11 +23,11 @@ beta = theta(2);      % Inverse temperature
 sensitivity = theta(3);     % Sensitivity
 decay = theta(4);     % Decay rate
 phi = theta(5);       % Exploration rate
-epsilon = theta(6);   % Epsilon parameter for static noise
-lapse = 0;            % Lapse rate
-recover = 1;          % Recover rate
+epsilon = theta(6);   % Uniform level of noise
+lapse = 0;            % Lapse rate - not used in static model
+recover = 1;          % Recover rate - not used in static model
 
-% Transition probability matrix for latent attentional state
+% Transition probability matrix for latent states
 T = [1 - recover, lapse; recover, 1 - lapse];
 
 choices = data(:, 1);    % Choices from data

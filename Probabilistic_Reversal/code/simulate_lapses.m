@@ -1,6 +1,6 @@
 clear all
 
-%% Simulate individual participants
+%% Set up simulation parameters for individual participants with extended lapses
 % Set the number of subjects to simulate
 num_subjects = 20;
 % Create a cell array to store simulated data for each subject
@@ -42,7 +42,7 @@ end
 % Create a cell array to store the models
 Ms = [];
 
-% Define the static model and its parameter limits
+% Define the static model and its parameter bounds
 curr_model = [];
 curr_model.name = 'static_model';
 curr_model.pMin = [1e-6, -1, 1e-6];
@@ -52,7 +52,7 @@ curr_model.pnames = {'alpha', 'stick', 'epsilon'};
 % Add the static model to the list of models
 Ms{1} = curr_model;
 
-% Define the dynamic model and its parameter limits
+% Define the dynamic model and its parameter bounds
 curr_model = [];
 curr_model.name = 'dynamic_model';
 curr_model.pMin = [1e-6, -1, 1e-6, 1e-6];
@@ -148,7 +148,7 @@ for subj_ind = 1:n_subj_to_plot
     this_static_sim = zeros(500, 6);
     this_dynamic_sim = zeros(500, 6);
     for it = 1:niters
-        % Simulate data for this subject using the static_model function
+        % Simulate data for this subject using the static model 
         this_data = static_model(sim_params(this_ID, :), starts(this_ID), durations(this_ID));
         this_data_all = this_data_all + this_data;
         this_static_sim = this_static_sim + static_model(All_Params{1}(this_ID, :));
@@ -238,7 +238,7 @@ end
 % Create a cell array to store the models
 Ms = [];
 
-% Define the static model and its parameter limits
+% Define the static model and its parameter bounds
 curr_model = [];
 curr_model.name = 'static_model';
 curr_model.pMin = [1e-6, -1, 1e-6];
@@ -248,7 +248,7 @@ curr_model.pnames = {'alpha', 'stick', 'epsilon'};
 % Add the static model to the list of models
 Ms{1} = curr_model;
 
-% Define the dynamic model and its parameter limits
+% Define the dynamic model and its parameter bounds
 curr_model = [];
 curr_model.name = 'dynamic_model';
 curr_model.pMin = [1e-6, -1, 1e-6, 1e-6];
@@ -333,7 +333,7 @@ for i = 1:length(Ms)
 end
 
 %% plot validation
-% Set the number of iterations for smoothing
+% Set the number of repeats for validation
 niters = 50;
 
 % Create a matrix to store the mean squared error (MSE) for each subject and model
@@ -345,7 +345,7 @@ parfor this_ID = 1:num_subjects
     this_static_sim = zeros(500, 6);
     this_dynamic_sim = zeros(500, 6);
     for it = 1:niters
-        % Simulate data for this subject using the static_model function
+        % Simulate data for this subject using the static model
         this_data = static_model(sim_params(this_ID, :), starts(this_ID), durations(this_ID));
         this_data_all = this_data_all + this_data;
         this_static_sim = this_static_sim + static_model(All_Params{1}(this_ID, :));
