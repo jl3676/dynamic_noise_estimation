@@ -30,7 +30,7 @@
 - compare_params.m: compares the same parameters between the best-fit values of the static and dynamic models (Fig 5, Fig 6, Fig A11)
 - identify_models.m: model identification analysis for both the static and dynamic models (Fig A8)
 - recover_params.m: generate and recover analysis for parameters of the dynamic model (Fig A10)
-- recover_latent_probs.m: recovery analysis of $\lambda(1)$ trajectory (Fig A10)
+- recover_latent_probs.m: recovery analysis of p(Engaged) trajectory (Fig A10)
 - validate_models.m: validation analysis against behavior for both models (Fig A9)
 
 ### Plots ([task_name]/plots/)
