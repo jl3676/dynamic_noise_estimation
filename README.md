@@ -6,7 +6,7 @@
 
 ## File structure
 
-### Simulations (Probabilistic_Reversal/)
+### Simulation code (Probabilistic_Reversal/)
 - code/`simulate_lapses.m`: analysis code for simulating data with lapses of attention and comparing the static and dynamic models (Fig 2)
 - code/`validate_models.m`: validation analysis for both models against data simulated by the dynamic model (Fig 3)
 
@@ -23,7 +23,7 @@
     - Public data repository: https://osf.io/we89v/
     - data_processing_scripts/concatenate_mats.m was created by Jing-Jing Li to reorganize the data structure
 
-### Modeling scripts for empirical datasets ([task_name]/code/)
+### Modeling code for empirical datasets ([task_name]/code/)
 - `static_model_llh.m` and `dynamic_model_llh.m`: functions to compute the negative log likelihoods of data given the static and dynamic model parameters
 - `static_model.m` and `dynamic_model.m`: functions to generate data using the static and dynamic models
 - `fit_models.m`: model fitting code for the static and dynamic models (Fig 4)
