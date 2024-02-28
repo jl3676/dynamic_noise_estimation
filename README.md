@@ -4,6 +4,20 @@
 ## Citation
  Li, J. J., Shi, C., Li, L., & Collins, A. G. (2023). Dynamic noise estimation: A generalized method for modeling noise fluctuations in decision-making. bioRxiv, 2023-06.
 
+ ```
+@article{LI2024102842,
+title = {Dynamic noise estimation: A generalized method for modeling noise fluctuations in decision-making},
+journal = {Journal of Mathematical Psychology},
+volume = {119},
+pages = {102842},
+year = {2024},
+issn = {0022-2496},
+doi = {https://doi.org/10.1016/j.jmp.2024.102842},
+url = {https://www.sciencedirect.com/science/article/pii/S0022249624000129},
+author = {Jing-Jing Li and Chengchun Shi and Lexin Li and Anne G.E. Collins}
+}
+ ```
+
 ## File structure
 
 ### Simulation code (Probabilistic_Reversal/)
