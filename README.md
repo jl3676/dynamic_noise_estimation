@@ -2,8 +2,6 @@
  Public repository for the dynamic noise estimation method paper.
 
 ## Citation
- Li, J. J., Shi, C., Li, L., & Collins, A. G. (2023). Dynamic noise estimation: A generalized method for modeling noise fluctuations in decision-making. bioRxiv, 2023-06.
-
  ```
 @article{LI2024102842,
 title = {Dynamic noise estimation: A generalized method for modeling noise fluctuations in decision-making},
